@@ -1,0 +1,82 @@
+{
+  "updatedAt": "2026-06-24T12:59:46.923Z",
+  "createdAt": "2026-06-10T01:14:47.562Z",
+  "id": "kZpFSfMG3XhnhkBa",
+  "name": "RAG workflow",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 2
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        -96
+      ],
+      "id": "84edf393-3eea-407a-978e-f964f6136c73",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -48,
+        -96
+      ],
+      "id": "8569c2b3-c830-4351-bc0e-a02ad009a6e8",
+      "name": "Search files and folders",
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f95a9464-a45b-41b3-ba4a-04715a90017e",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-06-10T01:14:47.562Z",
+      "createdAt": "2026-06-10T01:14:47.562Z",
+      "role": "workflow:owner",
+      "workflowId": "kZpFSfMG3XhnhkBa",
+      "projectId": "PfoaOEcVESuaMjLZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

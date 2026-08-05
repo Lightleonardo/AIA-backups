@@ -1,0 +1,471 @@
+{
+  "updatedAt": "2026-06-24T12:59:57.462Z",
+  "createdAt": "2026-06-09T23:47:11.329Z",
+  "id": "0Jd4Prs6uGViNITh",
+  "name": "Social Media Monitoring",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1232,
+        64
+      ],
+      "id": "c572a0d1-f151-4291-9ce3-d75166cd8e12",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://google.serper.dev/news",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-KEY",
+              "value": "bde8d0f8a8c087a12ea2b716d68f68259098bcad"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"q\": \"#AI\",\n  \"gl\": \"ng\",\n  \"hl\": \"en\",\n  \"tbs\": \"any time\" \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1024,
+        64
+      ],
+      "id": "b4c5bc19-8175-4d93-bf21-a901691cf37d",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const news = $json.news;\n\nreturn news.map(article => {\n  return {\n    json: article\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -816,
+        64
+      ],
+      "id": "bb03a8f0-936c-4e8d-8669-0df4e1a27c14",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const negativeWords = [\n  \"scam\",\n  \"bad\",\n  \"fraud\",\n  \"issue\",\n  \"broken\",\n  \"terrible\",\n  \"hate\",\n  \"worst\",\n  \"problem\",\n  \"fake\"\n];\n\nconst positiveWords = [\n  \"amazing\",\n  \"great\",\n  \"excellent\",\n  \"love\",\n  \"best\",\n  \"awesome\",\n  \"good\",\n  \"fantastic\",\n  \"successful\",\n  \"impressive\"\n];\n\nreturn items.map(item => {\n\n  const text = `\n    ${item.json.title || \"\"}\n    ${item.json.snippet || \"\"}\n  `.toLowerCase();\n\n  let sentiment = \"neutral\";\n\n  if (negativeWords.some(word => text.includes(word))) {\n    sentiment = \"negative\";\n  } else if (positiveWords.some(word => text.includes(word))) {\n    sentiment = \"positive\";\n  }\n\n  return {\n    json: {\n      ...item.json,\n      sentiment\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        64
+      ],
+      "id": "96be8378-15d8-4b53-9f9f-15b7e576bc01",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.sentiment }}",
+                    "rightValue": "neutral",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "255fb524-7364-4e30-bea5-b1625294dda2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Neutral "
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a04cf060-ccb3-4037-92f7-9bab160c985e",
+                    "leftValue": "={{ $json.sentiment }}",
+                    "rightValue": "positive",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "positive"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "34e10704-a81c-4d67-bc25-502a56061d2e",
+                    "leftValue": "={{ $json.sentiment }}",
+                    "rightValue": "negative",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "negative"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -400,
+        64
+      ],
+      "id": "b7ba83c9-5eba-4111-9d46-bbbf37bd2910",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appkFSgedW8qKWLqi",
+          "mode": "list",
+          "cachedResultName": "Social Media Doc.",
+          "cachedResultUrl": "https://airtable.com/appkFSgedW8qKWLqi"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblJuXTF9yZ04gUaP",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appkFSgedW8qKWLqi/tblJuXTF9yZ04gUaP"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Source": "={{ $json.link }}",
+            "Source Name": "={{ $json.source }}",
+            "Title": "={{ $json.title }}",
+            "Text": "={{ $json.snippet }}",
+            "Sentiment": "={{ $json.sentiment }}",
+            "Image URL": "={{ $json.imageUrl }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Text",
+              "displayName": "Text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Source Name",
+              "displayName": "Source Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Date Created",
+              "displayName": "Date Created",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Sentiment",
+              "displayName": "Sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Image URL",
+              "displayName": "Image URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -192,
+        112
+      ],
+      "id": "d4e3d08f-77cb-41c9-a372-05b87d1cbced",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "NPju8VWJKNE7rd4N",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5649710844",
+        "text": "=Negetive message Alert\nTitle: {{ $json.title }}\nName: {{ $json.snippet }}\nLink: {{ $json.link }}\nSource: {{ $json.source }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        256
+      ],
+      "id": "bcb68b3d-80ae-4252-ba57-05af5bf24f2e",
+      "name": "Send a text message",
+      "webhookId": "f6743e5b-7461-4d21-bbd2-be3a167bc94f",
+      "credentials": {
+        "telegramApi": {
+          "id": "VuXGuzAcWDEMlSvx",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "spreadsheet",
+        "sheetsUi": {
+          "sheetValues": [
+            {},
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3d3470fa-51c5-4b12-9207-81534d496f26",
+      "name": "Create spreadsheet"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Create spreadsheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record": {
+      "main": [
+        [
+          {
+            "node": "Create spreadsheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Create spreadsheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "d884ead0-d07d-477b-ac9a-d87372d4c210",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-06-09T23:47:11.329Z",
+      "createdAt": "2026-06-09T23:47:11.329Z",
+      "role": "workflow:owner",
+      "workflowId": "0Jd4Prs6uGViNITh",
+      "projectId": "PfoaOEcVESuaMjLZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

@@ -1,0 +1,164 @@
+{
+  "updatedAt": "2026-08-05T18:34:41.269Z",
+  "createdAt": "2026-08-05T17:38:57.881Z",
+  "id": "hR2ApXEv6qiJHJV5",
+  "name": "My workflow 3",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "edit",
+        "owner": "Cygnitrix",
+        "repository": "cygnitrix-workflow-backups",
+        "filePath": "={{$json.name}}-{{$json.id}}.json",
+        "fileContent": "={{JSON.stringify($json, null, 2)}}",
+        "commitMessage": "=Auto-update: {{$json.name}}"
+      },
+      "id": "f0f1bf3c-02e5-47d4-8678-8ace3a6b1610",
+      "name": "Update Existing File",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "webhookId": "bf871db8-474c-4d83-82ed-0edbb475f8ea",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": "Cygnitrix",
+        "repository": "cygnitrix-workflow-backups",
+        "filePath": "={{$json.name}}-{{$json.id}}.json",
+        "fileContent": "={{JSON.stringify($json, null, 2)}}",
+        "commitMessage": "=Initial Backup: {{$json.name}}"
+      },
+      "id": "2536932a-352d-43ec-aae3-aa0297845afe",
+      "name": "Create New File",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        672,
+        0
+      ],
+      "webhookId": "a7dffb07-9b41-4c4d-bd57-dac9cb7a765c",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 23
+            }
+          ]
+        }
+      },
+      "id": "a0745211-c4d0-4aea-bc5f-04c4f6df5277",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "filters": {
+          "activeWorkflows": false
+        },
+        "requestOptions": {
+          "allowUnauthorizedCerts": false
+        }
+      },
+      "id": "d8e693a7-61ea-4df4-849a-49f9df594e68",
+      "name": "Get All Workflows",
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "n8nApi": {
+          "id": "FOh1AQwwZGqN6WLp",
+          "name": "Light opara n8n"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Update Existing File": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Create New File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get All Workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Workflows": {
+      "main": [
+        [
+          {
+            "node": "Update Existing File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Africa/Lagos",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "98757e08-8fab-4f2c-92ab-dffff20f544e",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-05T17:38:57.881Z",
+      "createdAt": "2026-08-05T17:38:57.881Z",
+      "role": "workflow:owner",
+      "workflowId": "hR2ApXEv6qiJHJV5",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

@@ -1,0 +1,175 @@
+{
+  "updatedAt": "2026-07-17T11:31:42.201Z",
+  "createdAt": "2026-07-16T09:17:37.605Z",
+  "id": "1zTn5pVWNNfZAovz",
+  "name": "nvidia chatbot custom",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        144,
+        80
+      ],
+      "id": "0b83457c-b1db-4fe7-8c9e-55303bb48fdf",
+      "name": "When chat message received",
+      "webhookId": "24614f5e-6db6-4c49-87fc-a52d4dbe603c"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://integrate.api.nvidia.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"nvidia/nemotron-3-ultra-550b-a55b\",\n  \"messages\":  [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a senior backend engineer specializing in distributed systems and API architecture. You communicate in a clear, technical, and concise manner. You always explain your reasoning step by step. You never guess — if you are unsure, you say so explicitly. When writing code, you follow best practices and add brief inline comments. Avoid unnecessary filler language.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.chatInput }}\"\n    }\n  ],\n  \"temperature\": 1,\n  \"top_p\": 0.95,\n  \"max_tokens\": 16384,\n  \"reasoning_budget\": 16384,\n  \"chat_template_kwargs\": {\"enable_thinking\":true},\n  \"stream\": false\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        320,
+        80
+      ],
+      "id": "608be5f5-8e85-4e61-89e6-9fadd5741e78",
+      "name": "HTTP Request2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "rub9GJdLFI01xNjC",
+          "name": "nvidia/Nemotron3-ultra-550a"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "message": "={{ $json.choices[0].message.content }}",
+        "options": {
+          "memoryConnection": true,
+          "autoSaveHighlightedData": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        80
+      ],
+      "id": "2257dabf-8b1e-432e-b769-a283af833035",
+      "name": "Chat",
+      "webhookId": "068c591d-8ef1-4e95-998a-5872dd3829b2"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('When chat message received').item.json.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        640,
+        288
+      ],
+      "id": "eeae121d-90e2-48b8-89df-e104d99de325",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "content": "## Model call testing\nbuilding and testing nvidia/nemoteron 3 ultra api using curl/shell in a http node.\nbuilding a custom plain chat bot without the AI agent node and seeing ways to implement history in chat and a simple memory.",
+        "height": 496,
+        "width": 880
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        16,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "c4676f87-5e29-4e19-ae84-ee426bddc2f1",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Chat",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "timezone": "Africa/Lagos",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "3ffbc4df-c2a3-4e60-b352-0ea912079e02",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-07-16T09:17:37.605Z",
+      "createdAt": "2026-07-16T09:17:37.605Z",
+      "role": "workflow:owner",
+      "workflowId": "1zTn5pVWNNfZAovz",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

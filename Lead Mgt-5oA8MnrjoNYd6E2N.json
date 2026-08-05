@@ -1,0 +1,35 @@
+{
+  "updatedAt": "2026-08-05T19:21:52.484Z",
+  "createdAt": "2026-08-05T19:21:28.661Z",
+  "id": "5oA8MnrjoNYd6E2N",
+  "name": "Lead Mgt",
+  "active": false,
+  "isArchived": true,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f0c53738-9514-4246-bfd0-42bf0c6fb354",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-05T19:21:28.661Z",
+      "createdAt": "2026-08-05T19:21:28.661Z",
+      "role": "workflow:owner",
+      "workflowId": "5oA8MnrjoNYd6E2N",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

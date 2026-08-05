@@ -1,0 +1,795 @@
+{
+  "updatedAt": "2026-08-05T17:32:59.330Z",
+  "createdAt": "2026-06-16T20:03:15.518Z",
+  "id": "Gdu480qVByzRoNp3",
+  "name": "data chatbot",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "=ingest_data",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -944,
+        208
+      ],
+      "id": "0bc035a1-2801-45c5-8f5c-226d6687335d",
+      "name": "Webhook",
+      "webhookId": "647fd53d-0a83-402b-9092-f3c3e082f265"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "chat-input",
+              "name": "chatInput",
+              "value": "={{ $json.body.text }}",
+              "type": "string"
+            },
+            {
+              "id": "session-id",
+              "name": "sessionId",
+              "value": "={{ $json.body.session_id }}",
+              "type": "string"
+            },
+            {
+              "id": "session-title-from-request",
+              "name": "sessionTitleFromRequest",
+              "value": "={{ $json.body.session_title || null }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -656,
+        208
+      ],
+      "id": "aa09be29-edd7-43b5-afb5-a5a504c78c61",
+      "name": "Extract Fields"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "chat_sessions",
+          "mode": "name"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "session_id",
+              "value": "={{ $json.sessionId }}"
+            }
+          ]
+        },
+        "options": {
+          "queryBatching": "independently"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -432,
+        208
+      ],
+      "id": "e80b31d9-c5e6-4c73-a756-ea800adbaa94",
+      "name": "Check Session Exists",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "session-exists-check",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -208,
+        208
+      ],
+      "id": "14a5f3f8-615a-4229-bd3c-2de79fc52b29",
+      "name": "Session Exists?"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a short, concise session title (3-6 words max) from this user query:\n\n\"{{ $('Extract Fields').first().json.chatInput }}\"\n\n",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Generate a short session title from the user query. Return only JSON with a 'title' field.\n\nRules:\n- Natural language title\n- No labels like \"Session Title:\"\n- No quotation marks\n- No explanations\n- 3-6 words maximum\n\nReturn ONLY valid JSON:\n{\n  \"title\": \"Your Title Here\"\n}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -80,
+        400
+      ],
+      "id": "4a2ef3f3-c9df-4a3a-88c4-895f203a1ba8",
+      "name": "Generate Session Title"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $json.text;\nlet title;\n\ntry {\n  const cleaned = raw.replace(/```json\\n?|```/g, '').trim();\n  const parsed = JSON.parse(cleaned);\n  title = parsed.title || 'Untitled Session';\n} catch (e) {\n  title = raw.slice(0, 50) || 'Untitled Session';\n}\n\nreturn [{\n  json: {\n    sessionTitle: title,\n    sessionId: $('Extract Fields').first().json.sessionId\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        400
+      ],
+      "id": "dff196f2-7817-4301-b599-3932f6e7b8af",
+      "name": "Parse Title"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "chat_sessions",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $json.sessionId }}",
+            "session_title": "={{ $json.sessionTitle }}",
+            "user_id": {},
+            "message_role": "system",
+            "message_content": "Session created",
+            "query_metadata": "={}",
+            "created_at": "={{ $now }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message_role",
+              "displayName": "message_role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message_content",
+              "displayName": "message_content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "query_metadata",
+              "displayName": "query_metadata",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "session_title",
+              "displayName": "session_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        448,
+        400
+      ],
+      "id": "d8084030-2cbf-4b4b-82d8-02547f516aa5",
+      "name": "Create New Session",
+      "credentials": {
+        "postgres": {
+          "id": "gPosz2NsL3KPjy4I",
+          "name": "Lightleonardo project"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "existing-title",
+              "name": "sessionTitle",
+              "value": "={{ $json.session_title }}",
+              "type": "string"
+            },
+            {
+              "id": "existing-id",
+              "name": "sessionId",
+              "value": "={{ $json.session_id }}",
+              "type": "string"
+            },
+            {
+              "id": "4e4938a7-8a84-4d85-8e5a-40852e07b967",
+              "name": "=chatInput",
+              "value": "={{ $json.message_content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "eca45507-6066-4735-95da-743730bd55c2",
+      "name": "Extract Existing Session"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a retrieval-augmented assistant that ALWAYS returns responses in JSON format.\n\nYou have access to:\n- Pinecone vector store (website namespace): public site info\n- Pinecone vector store (database_records namespace): internal data extracts\n- HTTP fallback tool: external data source when Pinecone fails\n\nEXECUTION ORDER (CRITICAL):\n1. ALWAYS search Pinecone FIRST (both namespaces if query is ambiguous)\n2. If Pinecone confidence <= 40, call HTTP fallback tool\n3. NEVER answer from general knowledge\n\nOUTPUT FORMAT (MANDATORY - NO EXCEPTIONS):\nYou MUST return valid JSON in EXACTLY this structure:\n\n{\n  \"assistant_reply\": \"Your answer here\",\n  \"columns\": [\"col1\", \"col2\"],\n  \"rows\": [[val1, val2], [val3, val4]],\n  \"confidence\": 85,\n  \"sources\": [\"url1\", \"record_table:record_id\"]\n}. \n\nRULES:\n- assistant_reply: Natural language answer (required)\n- columns: Array of column names (empty [] if not tabular)\n- rows: Array of arrays (empty [] if not tabular)\n- confidence: Integer 0-100 (required)\n- sources: Array of URLs or record IDs (empty [] if none)\n\nWhen data IS tabular (e.g., \"costs by department\"):\n{\n  \"assistant_reply\": \"Here is the cost breakdown by department.\",\n  \"columns\": [\"department\", \"total_cost\"],\n  \"rows\": [[\"Marketing\", 12000], [\"Operations\", 8000]],\n  \"confidence\": 90,\n  \"sources\": [\"record_table:costs\"]\n}\n\nWhen data is NOT tabular:\n{\n  \"assistant_reply\": \"Our delivery zones include...\",\n  \"columns\": [],\n  \"rows\": [],\n  \"confidence\": 95,\n  \"sources\": [\"https://example.com/delivery\"]\n}\n\nFALLBACK TOOL USAGE:\n- Only call after Pinecone attempts\n- Send JSON body:\n{\n  \"client_id\": \"{{ $('Extract Fields').first().json.sessionId }}\",\n  \"question\": \"{{ $('Extract Fields').first().json.chatInput }}\",\n  \"erp_file_url\": \"https://drive.google.com/file/d/1VueVVW7jz2lW5dsqnxedsK0cJ1__p2jf/view?usp=drive_link\"\n}\n\nCONFIDENCE SCORING:\n- 90-100: Explicit answer in retrieved text\n- 70-89: Strong support with minor paraphrasing\n- 41-69: Partial support\n- 0-40: Insufficient → MUST use fallback\n\n\nNEVER:\n- Return plain text (must be JSON)\n- Fabricate data or sources\n- Mention tools/Pinecone/confidence in assistant_reply\n- Answer databased questions without retrieval first"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1136,
+        208
+      ],
+      "id": "f73e83b9-013c-43ec-869c-3244e90a6b64",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 1536
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1296,
+        608
+      ],
+      "id": "05574f31-5193-4aa0-86c7-d478ac8f48cd",
+      "name": "Embeddings (Website)"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search website crawl content in Pinecone. Use for: pricing, contact info, delivery zones, menus, services, policies. Returns relevant text passages with URLs.",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "agent-knowledge",
+          "mode": "list",
+          "cachedResultName": "agent-knowledge"
+        },
+        "options": {
+          "pineconeNamespace": "website"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1168,
+        400
+      ],
+      "id": "5c988e0e-ee06-49f2-973d-e179a8bc52bf",
+      "name": "Pinecone Website",
+      "credentials": {
+        "pineconeApi": {
+          "id": "ZQPva8ucHWLzzogW",
+          "name": "Light opara"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 1536
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1536,
+        608
+      ],
+      "id": "ebad6f57-550c-4bc0-9a4b-17de384c8480",
+      "name": "Embeddings (Database)"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search database records in Pinecone. Use for: orders, products, profiles, categories, revenue, SKUs, statuses. Returns record data with IDs.",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "agent-knowledge",
+          "mode": "list",
+          "cachedResultName": "agent-knowledge"
+        },
+        "options": {
+          "pineconeNamespace": "database_records"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1408,
+        400
+      ],
+      "id": "98b8b0c3-ca17-42bc-bda1-290e7e95935a",
+      "name": "Pinecone Database",
+      "credentials": {
+        "pineconeApi": {
+          "id": "ZQPva8ucHWLzzogW",
+          "name": "Light opara"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Fallback data source when Pinecone retrieval fails (confidence <= 40). Sends POST request with client_id, question, and erp_file_url. Only use after exhausting Pinecone retries.",
+        "method": "POST",
+        "url": "https://divverse-community.app.n8n.cloud/webhook/data-insight-on-demand",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"client_id\": $fromAI('client_id', '', 'string'),\n  \"question\": $fromAI('question', '', 'string'),\n  \"erp_file_url\": \"https://drive.google.com/file/d/1VueVVW7jz2lW5dsqnxedsK0cJ1__p2jf/view?usp=drive_link\"\n} }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1648,
+        400
+      ],
+      "id": "012e4523-5372-449e-8c95-cd16c37781b6",
+      "name": "HTTP Fallback Tool"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get AI output\nconst aiOutput = $json.output;\n\n// Get session info\nconst sessionId = $('Extract Fields').first().json.sessionId;\nlet sessionTitle;\n\n// Try to get title from existing session or newly generated\ntry {\n  sessionTitle = $('Extract Existing Session').first().json.sessionTitle ||\n                 $('Parse Title').first().json.sessionTitle ||\n                 'Untitled Session';\n} catch (e) {\n  sessionTitle = 'Untitled Session';\n}\n\n// Parse AI output as JSON\nlet parsedResponse;\ntry {\n  // Remove markdown code blocks if present\n  const cleaned = aiOutput.replace(/```json\\n?|```/g, '').trim();\n  parsedResponse = JSON.parse(cleaned);\n} catch (e) {\n  // Fallback if parsing fails\n  parsedResponse = {\n    assistant_reply: aiOutput,\n    columns: [],\n    rows: [],\n    confidence: 50,\n    sources: []\n  };\n}\n\n// Ensure all required fields exist\nconst finalResponse = {\n  session_id: sessionId,\n  session_title: sessionTitle,\n  assistant_reply: parsedResponse.assistant_reply || aiOutput,\n  columns: parsedResponse.columns || [],\n  rows: parsedResponse.rows || [],\n  confidence: parsedResponse.confidence || 50,\n  sources: parsedResponse.sources || []\n};\n\nreturn [{ json: finalResponse }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1616,
+        208
+      ],
+      "id": "dcfcd54f-af63-4527-90e0-9d4eafbd059c",
+      "name": "Format Final Response"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Extract Fields').first().json.sessionId }}",
+        "tableName": "chat_sessions",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        880,
+        608
+      ],
+      "id": "65d278e8-00bf-42c4-91bd-d8f9761354f6",
+      "name": "Postgres Chat Memory1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1920,
+        208
+      ],
+      "id": "46d200f5-531a-46e5-9224-593ef546b9c7",
+      "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        608
+      ],
+      "id": "a2ae09ba-ed40-436b-bc9a-512f80498414",
+      "name": "OpenAI"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        880,
+        400
+      ],
+      "id": "9d39a7bc-1f39-41e0-83a3-7f76d8e43a99",
+      "name": "OpenAI1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-5-20250929",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        992,
+        416
+      ],
+      "id": "07c00cbc-ec74-46c8-8707-b27c3a05d7d0",
+      "name": "Anthropic Chat Model"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1920,
+        480
+      ],
+      "id": "489dfbbc-944d-4727-b3b3-082ee14accb2",
+      "name": "Insert rows in a table"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Fields": {
+      "main": [
+        [
+          {
+            "node": "Check Session Exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Session Exists": {
+      "main": [
+        [
+          {
+            "node": "Session Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Session Exists?": {
+      "main": [
+        [
+          {
+            "node": "Extract Existing Session",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate Session Title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Session Title": {
+      "main": [
+        [
+          {
+            "node": "Parse Title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Title": {
+      "main": [
+        [
+          {
+            "node": "Create New Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create New Session": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Existing Session": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Format Final Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings (Website)": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Website",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Website": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings (Database)": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Database",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Database": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Fallback Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Final Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Session Title",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "c7a9a481-232a-4efc-b0f8-fc7bea0deb4e",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-06-16T20:03:15.518Z",
+      "createdAt": "2026-06-16T20:03:15.518Z",
+      "role": "workflow:owner",
+      "workflowId": "Gdu480qVByzRoNp3",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

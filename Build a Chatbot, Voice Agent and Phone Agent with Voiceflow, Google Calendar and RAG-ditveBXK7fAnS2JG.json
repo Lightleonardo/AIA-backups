@@ -1,0 +1,898 @@
+{
+  "updatedAt": "2026-07-06T13:00:17.067Z",
+  "createdAt": "2026-07-06T13:00:17.067Z",
+  "id": "ditveBXK7fAnS2JG",
+  "name": "Build a Chatbot, Voice Agent and Phone Agent with Voiceflow, Google Calendar and RAG",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "9ff7a394-5b4b-4790-a96b-c41c4ba27fa5",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "78b22dd2-0648-4600-bd4b-5c2f0a69d5a0",
+      "name": "n8n_order",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        -464,
+        1184
+      ],
+      "webhookId": "9ff7a394-5b4b-4790-a96b-c41c4ba27fa5",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "user@example.com",
+          "cachedResultName": "user@example.com"
+        },
+        "start": "={{ $json.output.start }}",
+        "end": "={{ $json.output.end }}",
+        "additionalFields": {
+          "description": "Event description",
+          "summary": "=Event title with {{ $('n8n_appointment').item.json.query.Email }}"
+        }
+      },
+      "id": "0cd2b382-5c91-4004-b01f-2dd2b1ed39b5",
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "position": [
+        192,
+        1600
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "1665e42b-6550-41be-bc30-ebd96c2afce6",
+      "name": "OpenAI Chat Model3",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        -240,
+        1808
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Convert this date to a compatible format for Google Calendar APIs for the start date, and for the end date add 1 hour to the start date.\n\nHere is the start date:\n{{ $json.query.Appointment_date }}",
+        "hasOutputParser": true
+      },
+      "id": "d5591b66-6875-4540-bdbb-2c60ae962600",
+      "name": "Concert start date",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        -208,
+        1600
+      ],
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "path": "f5edfe92-649b-40da-ab35-f818ccb55ad4",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "7255339e-da68-4dcb-b10b-a0aafd6a21ff",
+      "name": "n8n_appointment",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        -464,
+        1600
+      ],
+      "webhookId": "f5edfe92-649b-40da-ab35-f818ccb55ad4",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "qdrantCollection": {
+          "__rl": true,
+          "mode": "list",
+          "value": "scarperia",
+          "cachedResultName": "scarperia"
+        },
+        "options": {}
+      },
+      "id": "cd284185-ccf2-4ffb-8880-4a8678ced3dd",
+      "name": "Retrive Qdrant Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "position": [
+        -96,
+        2608
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "aa5eef0e-f72e-4918-ba5d-5f9704ce9a49",
+      "name": "Embeddings OpenAI2",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        -144,
+        2784
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "name": "company_data",
+        "description": "Retrive data about company knowledge from vector store"
+      },
+      "id": "85a09e23-c277-4c9b-ad63-ae332d66e1b4",
+      "name": "RAG",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "position": [
+        64,
+        2400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "80852ebd-a3f8-4f17-b248-a703fa9519a1",
+      "name": "OpenAI Chat Model2",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        -144,
+        2400
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "de1d271f-de9b-486a-b3b4-ad10ccfa4e59",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        224,
+        2624
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "={{ $json.query.Question }}",
+        "options": {
+          "systemMessage": "You are an AI-powered assistant for an electronics store. Your primary goal is to assist customers by providing accurate and helpful information about products, troubleshooting tips, and general support. Use the provided knowledge base (retrieved documents) to answer questions with precision and professionalism.\n\n**Guidelines**:\n1. **Product Information**:\n   - Provide detailed descriptions of products, including specifications, features, and compatibility.\n   - Highlight key selling points and differences between similar products.\n   - Mention availability, pricing, and promotions if applicable.\n\n2. **Technical Support**:\n   - Offer step-by-step troubleshooting guides for common issues.\n   - Suggest solutions for setup, installation, or configuration problems.\n   - If the issue is complex, recommend contacting the store’s support team for further assistance.\n\n3. **Customer Service**:\n   - Respond politely and professionally to all inquiries.\n   - If a question is unclear, ask for clarification to provide the best possible answer.\n   - For order-related questions (e.g., status, returns, or cancellations), guide customers on how to proceed using the store’s systems.\n\n4. **Knowledge Base Usage**:\n   - Always reference the provided knowledge base (retrieved documents) to ensure accuracy.\n   - If the knowledge base does not contain relevant information, inform the customer and suggest alternative resources or actions.\n\n5. **Tone and Style**:\n   - Use a friendly, approachable, and professional tone.\n   - Avoid technical jargon unless the customer demonstrates familiarity with the topic.\n   - Keep responses concise but informative.\n\n**Example Interactions**:\n1. **Product Inquiry**:\n   - Customer: \"What’s the difference between the XYZ Smartwatch and the ABC Smartwatch?\"\n   - AI: \"The XYZ Smartwatch features a longer battery life (up to 7 days) and built-in GPS, while the ABC Smartwatch has a brighter AMOLED display and supports wireless charging. Both are compatible with iOS and Android devices. Would you like more details on either product?\"\n\n2. **Technical Support**:\n   - Customer: \"My wireless router isn’t connecting to the internet.\"\n   - AI: \"Please try the following steps: 1) Restart your router and modem. 2) Ensure all cables are securely connected. 3) Check if the router’s LED indicators show a stable connection. If the issue persists, you may need to reset the router to factory settings. Would you like a detailed guide for resetting your router?\"\n\n3. **Customer Service**:\n   - Customer: \"How do I return a defective product?\"\n   - AI: \"To return a defective product, please visit our Returns Portal on our website and enter your order number. You’ll receive a return label and instructions. If you need further assistance, our support team is available at user@example.com.\"\n\n**Limitations**:\n- If the question is outside the scope of the knowledge base or requires human intervention, inform the customer and provide contact details for the appropriate department.\n- Do not provide speculative or unverified information. Always rely on the knowledge base or direct the customer to official resources."
+        }
+      },
+      "id": "16362b09-2210-4b28-b370-b11c1f0cb687",
+      "name": "Retrive Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -64,
+        2192
+      ],
+      "typeVersion": 1.7
+    },
+    {
+      "parameters": {
+        "path": "edb1e894-1210-4902-a34f-a014bbdad8d8",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "0d388ab8-e091-42c9-82aa-e4edbd5397cd",
+      "name": "n8n_rag",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        -480,
+        2192
+      ],
+      "webhookId": "edb1e894-1210-4902-a34f-a014bbdad8d8",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "86f332ff-7b89-4dd4-8df9-06c081625d33",
+              "name": "text",
+              "type": "string",
+              "value": "=Your order status is: {{ $json.status }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "98cfe0f0-9104-4191-b025-269a842aae29",
+      "name": "Tracking response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        240,
+        1184
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0fe6fe50-9263-479a-ab01-ca1d15ce2412",
+              "name": "text",
+              "type": "string",
+              "value": "L'evento è stato creato con successo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1e41d2f2-cf37-415e-8446-109f3088ba06",
+      "name": "Calendar response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        384,
+        1600
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d94ef423-f6ad-42b4-95c1-be69c92d22f3",
+      "name": "Webhook tracking response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        592,
+        1184
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "url": "URL_TRACKING",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Order number",
+              "value": "={{ $json.Order_number }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Order_number }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f042575c-099a-43a7-b287-65f0c5e8afd1",
+      "name": "API URL Tracking",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -96,
+        1184
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4a3bb552-0499-4dd9-9d97-aa261d1bb762",
+      "name": "Webhook calendar response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        592,
+        1600
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"start\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"end\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}"
+      },
+      "id": "a57b43b0-9910-4e29-8280-5714a63d5170",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        32,
+        1808
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "6b68d809-60c9-400b-98d2-12cf35187be7",
+      "name": "Webhook RAG response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        592,
+        2192
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "content": "# STEP 6 - VOICEFLOW\n\n- Register on [Voiceflow](https://www.voiceflow.com/) \n- Create the workflow as shown in the following image\n![image](https://i.postimg.cc/3rSPwMn2/langflow.png)\n- There are 3 \"Captures\":\n-- n8n_order\n-- n8n_appointment\n-- n8n_rag\n- Add in the created functions the url of the corresponding n8n Webhook trigger node\n- Test your Agent\n- Get your projectID\n- In the Widget section choose Chat or Voice and copy the installation script\n![image](https://i.postimg.cc/855gyTZP/voiceflow-agent.png)\n![image](https://i.postimg.cc/5Nn4Sk43/voiceflow-agent2.png)\n\nPS. You can import a Twilio number to assign it to your agent for becoming a Phone Agent\n![image](https://i.postimg.cc/cLymTTFv/voiceflow-agent3.png)\n\n",
+        "height": 2200,
+        "width": 1140
+      },
+      "id": "50fdce40-b1cc-4060-b502-7eff348a2832",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        992,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "665cab5c-c4fd-4041-a7b8-0b86d3da386f",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -496,
+        208
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {
+          "__rl": true,
+          "mode": "id",
+          "value": "="
+        },
+        "options": {}
+      },
+      "id": "be5369f3-6249-41a6-b5e8-bdd3e8a31506",
+      "name": "Qdrant Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "position": [
+        480,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://QDRANTURL/collections/COLLECTION",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"filter\": {}\n}",
+        "options": {}
+      },
+      "id": "be0a34c5-947c-4297-a3d0-1e4f5a0b973b",
+      "name": "Create collection",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -208,
+        64
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https:/YOUR_AWS_SECRET_KEY_HERE/delete",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"filter\": {}\n}",
+        "options": {}
+      },
+      "id": "c96e1391-c9df-4d3f-84ac-6032bf7df50e",
+      "name": "Refresh collection",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -208,
+        320
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive",
+            "cachedResultUrl": "https://drive.google.com/drive/my-drive",
+            "cachedResultName": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "=test-whatsapp"
+          }
+        },
+        "options": {}
+      },
+      "id": "09862d0d-63ef-4bbb-8b34-c336d6324996",
+      "name": "Get folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        32,
+        320
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "id": "6851642a-bb1e-4dea-af1f-1f57efd1a639",
+      "name": "Download Files",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        240,
+        320
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "28da4d07-edbc-472b-b6fb-9e8d45022126",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        464,
+        528
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "id": "964b4ff7-1c1c-448f-a413-c9984cf9af14",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "position": [
+        640,
+        528
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "chunkSize": 300,
+        "chunkOverlap": 30
+      },
+      "id": "a3fb865e-3ef1-4d33-a95d-d6283ad04162",
+      "name": "Token Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterTokenSplitter",
+      "position": [
+        640,
+        720
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# STEP 1\n\n## Create Qdrant Collection\nChange:\n- QDRANTURL\n- COLLECTION",
+        "height": 220,
+        "width": 880,
+        "color": 6
+      },
+      "id": "09b824cc-6340-4c4a-a16e-54a757bafbc0",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# STEP 2\n\n\n\n\n\n\n\n\n\n\n\n\n## Documents vectorization with Qdrant and Google Drive\nChange:\n- QDRANTURL\n- COLLECTION",
+        "height": 400,
+        "width": 620,
+        "color": 4
+      },
+      "id": "ec2c8d40-ef69-417c-9aeb-cab0a9713820",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -224,
+        272
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# STEP 5\nIf required retrive the informations by RAG system",
+        "width": 1220,
+        "color": 5
+      },
+      "id": "b1c122d8-8a8b-4829-b489-d088d913e5fe",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -496,
+        1984
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# STEP 3\nIf required retrive the informations by Order system\n- Set your API URL Tracking service",
+        "width": 1220,
+        "color": 5
+      },
+      "id": "129ce81b-1e46-43ca-a2a7-9b7cdd325ffc",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        960
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# STEP 4\nIf required retrive the informations by Appointment system",
+        "width": 1220,
+        "color": 5
+      },
+      "id": "48d3e2c1-04da-4679-90cd-78c82f836469",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        1408
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "RAG": {
+      "ai_tool": [
+        [
+          {
+            "node": "Retrive Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n_rag": {
+      "main": [
+        [
+          {
+            "node": "Retrive Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n_order": {
+      "main": [
+        [
+          {
+            "node": "API URL Tracking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get folder": {
+      "main": [
+        [
+          {
+            "node": "Download Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrive Agent": {
+      "main": [
+        [
+          {
+            "node": "Webhook RAG response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Files": {
+      "main": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Token Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "main": [
+        [
+          {
+            "node": "Calendar response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n_appointment": {
+      "main": [
+        [
+          {
+            "node": "Concert start date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API URL Tracking": {
+      "main": [
+        [
+          {
+            "node": "Tracking response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar response": {
+      "main": [
+        [
+          {
+            "node": "Webhook calendar response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tracking response": {
+      "main": [
+        [
+          {
+            "node": "Webhook tracking response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Concert start date": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Retrive Qdrant Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "RAG",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Retrive Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Concert start date",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refresh collection": {
+      "main": [
+        [
+          {
+            "node": "Get folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Concert start date",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrive Qdrant Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "RAG",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Create collection",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Refresh collection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "345d02b5-c35e-470b-b500-d6e4e2ab407b",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-07-06T13:00:17.067Z",
+      "createdAt": "2026-07-06T13:00:17.067Z",
+      "role": "workflow:owner",
+      "workflowId": "ditveBXK7fAnS2JG",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

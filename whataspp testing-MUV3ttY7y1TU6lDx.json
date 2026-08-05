@@ -1,0 +1,111 @@
+{
+  "updatedAt": "2026-05-25T16:37:00.491Z",
+  "createdAt": "2026-05-25T13:47:36.885Z",
+  "id": "MUV3ttY7y1TU6lDx",
+  "name": "whataspp testing",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {
+          "messageStatusUpdates": [
+            "all"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "13de42cb-c90e-44f6-ae1a-cee53463e930",
+      "name": "WhatsApp Trigger",
+      "webhookId": "fa40b5e9-be64-453f-afbd-e26c52b40348",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "BIvzwRmsukp5zO5E",
+          "name": "n8n agency app"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "72debfa7-9a8f-4bff-91df-a75f9efe6d82",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        0
+      ],
+      "id": "0e69f1e1-6e4e-4844-859e-8a65fc07dee5",
+      "name": "Send message",
+      "webhookId": "797826ef-9a07-40ab-841c-c1283d4d1ac3"
+    }
+  ],
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "0451f885-99cb-4439-a4e9-6fa012ea2fa6",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-05-25T13:47:36.885Z",
+      "createdAt": "2026-05-25T13:47:36.885Z",
+      "role": "workflow:owner",
+      "workflowId": "MUV3ttY7y1TU6lDx",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

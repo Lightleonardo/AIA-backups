@@ -1,0 +1,272 @@
+{
+  "updatedAt": "2026-08-02T06:49:54.885Z",
+  "createdAt": "2026-06-26T13:36:00.829Z",
+  "id": "43d6DriE8KVUcIbw",
+  "name": "Hack Automation",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "chatIds": "1651319368"
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        96
+      ],
+      "id": "eb530fa6-a7fe-4de8-885b-0ad2dd261467",
+      "name": "Telegram Trigger",
+      "webhookId": "c78010bd-d004-4e14-89c0-7bea2031311a",
+      "credentials": {
+        "telegramApi": {
+          "id": "kEJrki3Nk1nu4AXK",
+          "name": "Automated_Agent1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1651319368",
+        "text": "Hey i am back online",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_notification": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "MarkdownV2"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        272,
+        -64
+      ],
+      "id": "211cb2d0-19cc-445e-b1af-f9481a5c67ea",
+      "name": "Send a text message",
+      "webhookId": "8063cc3f-9d4f-46b8-b0bd-907544b57c46",
+      "credentials": {
+        "telegramApi": {
+          "id": "VuXGuzAcWDEMlSvx",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "post",
+        "organizationId": "6a464db5836a31dbca5dae67",
+        "channelId": "6a465efc5ab6d2f106977e44|twitter",
+        "shareMode": "customScheduled"
+      },
+      "type": "@bufferapp/n8n-nodes-buffer.buffer",
+      "typeVersion": 1,
+      "position": [
+        192,
+        80
+      ],
+      "id": "d4193dcf-bb00-48d7-86a3-748b931cb962",
+      "name": "Create a post",
+      "credentials": {
+        "bufferApi": {
+          "id": "JwlQaHLmVplDQvVo",
+          "name": "Light opara"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -32,
+        240
+      ],
+      "id": "389cec76-dbaf-4c91-a0f2-28950c0e4f6d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "lastNode"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -240,
+        240
+      ],
+      "id": "4c0204e6-ded8-4557-9f8a-d929a55bb7c6",
+      "name": "When chat message received",
+      "webhookId": "89cb5e25-3dce-49c0-8b5c-1d1a3145936c"
+    },
+    {
+      "parameters": {
+        "model": "inclusionai/ling-3.0-flash:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        448
+      ],
+      "id": "93ae5d37-f7d6-4b49-ae63-c02a1a56e8bc",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "DZUhuwoq7WBAd1mC",
+          "name": "Light opara"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        432
+      ],
+      "id": "58ed0316-9299-4be5-808f-51462107f2fd",
+      "name": "Think",
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        48,
+        416
+      ],
+      "id": "271c024f-4f86-44fa-93c1-2dc12163b3a9",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        448
+      ],
+      "id": "7e085e2a-26eb-4e87-8b0f-5111a2a51308",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "EEoGIAWGfOtmKpRX",
+          "name": "light opara account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "Create a post": {
+      "main": [
+        []
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Send a text message": [
+      {
+        "json": "<!DOCTYPE html>\n<html class=\"\" data-theme=\"light\">\n  <head>\n    <meta charset=\"utf-8\">\n    <title>Page not found</title>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <meta property=\"description\" content=\"\">\n    <meta property=\"og:title\" content=\"Page not found\">\n    <meta property=\"og:image\" content=\"\">\n    <meta property=\"og:description\" content=\"\">\n    <link rel=\"icon\" type=\"image/svg+xml\" href=\"/img/website_icon.svg?4\">\n<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/img/apple-touch-icon.png\">\n<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/img/favicon-32x32.png\">\n<link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/img/favicon-16x16.png\">\n<link rel=\"alternate icon\" href=\"/img/favicon.ico\" type=\"image/x-icon\" />\n    <link href=\"/css/bootstrap.min.css?3\" rel=\"stylesheet\">\n    \n    <link href=\"/css/telegram.css?252\" rel=\"stylesheet\" media=\"screen\">\n    <link href=\"/css/telegram-theme.css?5\" rel=\"stylesheet\" media=\"screen\">\n    <style>\n    </style>\n  </head>\n  <body class=\"preload\">\n    <button class=\"theme-toggle theme-toggle--static\" type=\"button\" title=\"Toggle theme\" aria-label=\"Toggle light/dark theme\"></button>\n    <div class=\"dev_page_wrap\">\n      <div class=\"dev_page_head navbar navbar-static-top navbar-tg\">\n        <div class=\"navbar-inner\">\n          <div class=\"container clearfix\">\n            <ul class=\"nav navbar-nav navbar-right hidden-xs\"><li class=\"navbar-twitter hidden-xs\"><a href=\"https://x.com/telegram\" target=\"_blank\" data-track=\"Follow/Twitter\" onclick=\"trackDlClick(this, event)\"><i class=\"icon icon-twitter\"></i> Follow on X</a></li></ul>\n            <ul class=\"nav navbar-nav\">\n              <li><a href=\"//telegram.org/\">Home</a></li>\n<li class=\"hidden-xs\"><a href=\"//telegram.org/faq\">FAQ</a></li>\n<li class=\"hidden-xs\"><a href=\"//telegram.org/apps\">Apps</a></li>\n<li class=\"\"><a href=\"/api\">API</a></li>\n<li class=\"\"><a href=\"/mtproto\">Protocol</a></li>\n<li class=\"\"><a href=\"/schema\">Schema</a></li>\n            </ul>\n          </div>\n        </div>\n      </div>\n      <div class=\"container clearfix\">\n        <div class=\"dev_page\">\n          <div id=\"dev_page_content_wrap\" class=\" \">\n  <div class=\"dev_page_bread_crumbs\"></div>\n  <h1 id=\"dev_page_title\">Page not found</h1>\n  \n  <div id=\"dev_page_content\">The page has not been saved</div>\n  \n</div>\n          \n        </div>\n      </div>\n      <div class=\"footer_wrap\">\n  <div class=\"footer_columns_wrap footer_desktop\">\n    <div class=\"footer_column footer_column_telegram\">\n      <h5>Telegram</h5>\n      <div class=\"footer_telegram_description\"></div>\n      Telegram is a cloud-based mobile and desktop messaging app with a focus on security and speed.\n    </div>\n\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/faq\">About</a></h5>\n      <ul>\n        <li><a href=\"//telegram.org/faq\">FAQ</a></li>\n        <li><a href=\"//telegram.org/privacy\">Privacy</a></li>\n        <li><a href=\"//telegram.org/press\">Press</a></li>\n      </ul>\n    </div>\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/apps#mobile-apps\">Mobile Apps</a></h5>\n      <ul>\n        <li><a href=\"//telegram.org/dl/ios\">iPhone/iPad</a></li>\n        <li><a href=\"//telegram.org/android\">Android</a></li>\n        <li><a href=\"//telegram.org/dl/web\">Mobile Web</a></li>\n      </ul>\n    </div>\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/apps#desktop-apps\">Desktop Apps</a></h5>\n      <ul>\n        <li><a href=\"//desktop.telegram.org/\">PC/Mac/Linux</a></li>\n        <li><a href=\"//macos.telegram.org/\">macOS</a></li>\n        <li><a href=\"//telegram.org/dl/web\">Web-browser</a></li>\n      </ul>\n    </div>\n    <div class=\"footer_column footer_column_platform\">\n      <h5><a href=\"/\">Platform</a></h5>\n      <ul>\n        <li><a href=\"/api\">API</a></li>\n        <li><a href=\"//translations.telegram.org/\">Translations</a></li>\n        <li><a href=\"//instantview.telegram.org/\">Instant View</a></li>\n      </ul>\n    </div>\n  </div>\n  <div class=\"footer_columns_wrap footer_mobile\">\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/faq\">About</a></h5>\n    </div>\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/blog\">Blog</a></h5>\n    </div>\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/press\">Press</a></h5>\n    </div>\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/safety\">Safety</a></h5>\n    </div>\n  </div>\n</div>\n    </div>\n    <script src=\"/js/main.js?49\"></script>\n    <script src=\"/js/tgsticker.js?32\"></script>\n\n    <script src=\"/js/main-theme.js?6\"></script>\n    <script>backToTopInit(\"Go up\");\nremovePreloadInit();\n</script>\n  </body>\n</html>\n<!-- page generated in 3.97ms -->\n",
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "085a8022-4896-4908-b071-006d101554e6",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-06-26T13:36:00.829Z",
+      "createdAt": "2026-06-26T13:36:00.829Z",
+      "role": "workflow:owner",
+      "workflowId": "43d6DriE8KVUcIbw",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

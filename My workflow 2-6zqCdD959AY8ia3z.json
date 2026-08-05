@@ -1,0 +1,82 @@
+{
+  "updatedAt": "2026-07-25T14:46:59.402Z",
+  "createdAt": "2026-07-25T09:08:29.590Z",
+  "id": "6zqCdD959AY8ia3z",
+  "name": "My workflow 2",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bfe22c3e-affe-4d75-bd28-acc28ec11b9d",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "createFromText",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "bcefc0ca-4635-47c8-98b3-07a2fdfadb6f",
+      "name": "Create file from text"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Create file from text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "14ab5dc4-11be-4835-96b6-68d413ed79d2",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-07-25T09:08:29.590Z",
+      "createdAt": "2026-07-25T09:08:29.590Z",
+      "role": "workflow:owner",
+      "workflowId": "6zqCdD959AY8ia3z",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

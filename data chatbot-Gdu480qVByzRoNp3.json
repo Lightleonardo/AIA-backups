@@ -790,6 +790,5 @@
     }
   ],
   "activeVersion": null,
-  "tags": [],
-  "error": "The resource you are requesting could not be found"
+  "tags": []
 }

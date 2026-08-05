@@ -1,0 +1,162 @@
+{
+  "updatedAt": "2026-06-05T14:50:52.167Z",
+  "createdAt": "2026-05-25T09:47:03.241Z",
+  "id": "S1bCOvTssXelD8Sx",
+  "name": "whatsapp community nodes",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0d663046-573d-4470-9168-e6bec1def132",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1acc897c-0fee-4371-a3a4-c9808b62ad8c",
+      "name": "Get many messages",
+      "webhookId": "0ba37a6a-0bc6-4c5b-b8df-ff384b973332"
+    },
+    {
+      "parameters": {
+        "productOperation": "error"
+      },
+      "type": "n8n-nodes-whatsable.whatsAble",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "f2cfcdf0-9e21-43f5-b40e-52e416ec538c",
+      "name": "Send whatsapp message"
+    },
+    {
+      "parameters": {
+        "toWhatsapp": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "4cc85d52-d366-4722-8043-225c4b8b7cde",
+      "name": "Send an SMS/MMS/WhatsApp message"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "com.twilio.messaging.inbound-message.received"
+        ]
+      },
+      "type": "n8n-nodes-base.twilioTrigger",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -144
+      ],
+      "id": "46e5fea2-a790-44ba-8404-561efdd9b949",
+      "name": "Twilio Trigger",
+      "webhookId": "212da8ce-3a36-4e45-98a1-2f1a36c40fdc"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        832,
+        0
+      ],
+      "id": "97c2d883-9144-4097-a15b-4f43a7ea2730",
+      "name": "Send message",
+      "webhookId": "0d4da190-9c50-4a00-9b7e-f618c7b9e469"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "Send whatsapp message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send whatsapp message": {
+      "main": [
+        [
+          {
+            "node": "Send an SMS/MMS/WhatsApp message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an SMS/MMS/WhatsApp message": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "2f018211-49dc-425d-8c8c-9881e5db91fb",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-05-25T09:47:03.241Z",
+      "createdAt": "2026-05-25T09:47:03.241Z",
+      "role": "workflow:owner",
+      "workflowId": "S1bCOvTssXelD8Sx",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

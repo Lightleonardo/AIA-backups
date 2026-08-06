@@ -1,0 +1,65 @@
+{
+  "updatedAt": "2026-08-06T15:11:40.481Z",
+  "createdAt": "2026-08-06T15:11:40.481Z",
+  "id": "rZQACgqFrpZajaFK",
+  "name": "My workflow 3",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ee216dcf-4c25-4dad-80ab-735a70790094",
+      "name": "Google Sheets Trigger"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "c8641284-a7cf-4a2e-912d-b803b9e9dbdf",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-06T15:11:40.481Z",
+      "createdAt": "2026-08-06T15:11:40.481Z",
+      "role": "workflow:owner",
+      "workflowId": "rZQACgqFrpZajaFK",
+      "projectId": "ZFnZkZDMTyLt0Ceo"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

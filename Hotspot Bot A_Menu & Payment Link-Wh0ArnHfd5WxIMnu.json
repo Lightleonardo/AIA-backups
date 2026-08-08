@@ -1,0 +1,925 @@
+{
+  "updatedAt": "2026-08-08T20:22:26.136Z",
+  "createdAt": "2026-08-08T14:28:53.872Z",
+  "id": "Wh0ArnHfd5WxIMnu",
+  "name": "Hotspot Bot A_Menu & Payment Link",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "id": "b820df73-7fd1-4833-8641-27b19ae7027a",
+      "name": "Telegram Message Received",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        352
+      ],
+      "webhookId": "d46babf8-0987-45ba-a368-58e03b2d9ec6",
+      "credentials": {
+        "telegramApi": {
+          "id": "VuXGuzAcWDEMlSvx",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "chat_id",
+              "name": "chat_id",
+              "value": "={{ $json.message?.chat?.id ?? $json.callback_query?.message?.chat?.id }}",
+              "type": "string"
+            },
+            {
+              "id": "user_name",
+              "name": "user_name",
+              "value": "={{ $json.message?.from?.first_name ?? $json.callback_query?.from?.first_name ?? \"there\" }}",
+              "type": "string"
+            },
+            {
+              "id": "input_type",
+              "name": "input_type",
+              "value": "={{ $json.callback_query ? \"callback\" : \"message\" }}",
+              "type": "string"
+            },
+            {
+              "id": "text",
+              "name": "text",
+              "value": "={{ $json.message?.text ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "callback_data",
+              "name": "callback_data",
+              "value": "={{ $json.callback_query?.data ?? \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "710181a7-d0f5-46a7-9663-d219901475d1",
+      "name": "Normalize Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.input_type }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "message",
+                    "id": "a75f0448-7bae-4707-8e60-8d22eee8d935"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.input_type }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "callback",
+                    "id": "5b0ad45d-e453-436a-b723-0089ba50ffbd"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      },
+      "id": "542b06a6-c4d3-4dc7-be2c-6f539de2a514",
+      "name": "Route Input Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        448,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "=👋 Hello {{ $json.user_name }}!\n\nWelcome to *CaféNet WiFi* 🌐\n\nSelect a plan to get started:",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "⏱ 1 Hour — ₦200",
+                    "additionalFields": {
+                      "callback_data": "plan_1hr_200"
+                    }
+                  },
+                  {
+                    "text": "⏱ 3 Hours — ₦500",
+                    "additionalFields": {
+                      "callback_data": "plan_3hr_500"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "⏱ 24 Hours — ₦1,000",
+                    "additionalFields": {
+                      "callback_data": "plan_24hr_1000"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "📦 500MB — ₦300",
+                    "additionalFields": {
+                      "callback_data": "plan_500mb_300"
+                    }
+                  },
+                  {
+                    "text": "📦 1GB — ₦500",
+                    "additionalFields": {
+                      "callback_data": "plan_1gb_500"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "📦 5GB — ₦2,000",
+                    "additionalFields": {
+                      "callback_data": "plan_5gb_2000"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "dc2fb194-8015-4f18-a839-51f12513bdf9",
+      "name": "Send Plan Menu",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        224
+      ],
+      "webhookId": "b8dd6681-b597-4f47-a34c-2df428bc830b",
+      "credentials": {
+        "telegramApi": {
+          "id": "VuXGuzAcWDEMlSvx",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callback_data }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "plan_1hr_200",
+                    "id": "2b801f54-fe31-43c5-b4a4-f95313987bea"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callback_data }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "plan_3hr_500",
+                    "id": "d15f97e0-b7c9-4f34-8b94-ed9dcb68df05"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callback_data }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "plan_24hr_1000",
+                    "id": "26a58fe4-c70a-4d66-9dd9-da577903e7f3"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callback_data }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "plan_500mb_300",
+                    "id": "121c3471-a288-42d2-b197-a41eb89d3154"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callback_data }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "plan_1gb_500",
+                    "id": "b0571109-cd91-43e4-bc6d-ecd8bcd93f89"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callback_data }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "plan_5gb_2000",
+                    "id": "a101a44f-0a00-47e7-ad5f-a9fcfde1922c"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      },
+      "id": "bed27c66-7c33-486c-a64c-9c87d73c7f2e",
+      "name": "Route Plan Selection",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        672,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "p1_name",
+              "name": "plan_name",
+              "value": "1 Hour",
+              "type": "string"
+            },
+            {
+              "id": "p1_code",
+              "name": "plan_code",
+              "value": "TIME_1HR",
+              "type": "string"
+            },
+            {
+              "id": "p1_kobo",
+              "name": "amount_kobo",
+              "value": "20000",
+              "type": "string"
+            },
+            {
+              "id": "p1_naira",
+              "name": "amount_naira",
+              "value": "200",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "bc521dce-cb9e-4006-8619-dbe4ad32b7d3",
+      "name": "Set Plan: 1 Hour",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.paystack.co/transaction/initialize",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"amount\": $json.amount_kobo, \"currency\": \"NGN\", \"metadata\": { \"telegram_chat_id\": $json.chat_id, \"plan_name\": $json.plan_name, \"plan_code\": $json.plan_code, \"user_name\": $json.user_name }, \"callback_url\": \"https://t.me/yourcafebot\" } }}",
+        "options": {}
+      },
+      "id": "8863f57c-f5f2-48ef-b3e2-d13bfa086bd2",
+      "name": "Generate Paystack Payment Link",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1120,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "=✅ *{{ $json.plan_name }} Plan* — ₦{{ $json.amount_naira }}\n\nClick below to complete your payment securely via Paystack 👇",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "💳 Pay Now",
+                    "additionalFields": {
+                      "url": "={{ $json.data.authorization_url }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "4f5db3cf-2dc8-4192-b38a-61d3dd82f3ff",
+      "name": "Send Payment Link to Customer",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        608
+      ],
+      "webhookId": "983ee0b1-55f0-4697-890d-5ab3bbf0f7a7",
+      "credentials": {
+        "telegramApi": {
+          "id": "VuXGuzAcWDEMlSvx",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "p2_name",
+              "name": "plan_name",
+              "value": "3 Hours",
+              "type": "string"
+            },
+            {
+              "id": "p2_code",
+              "name": "plan_code",
+              "value": "TIME_3HR",
+              "type": "string"
+            },
+            {
+              "id": "p2_kobo",
+              "name": "amount_kobo",
+              "value": "50000",
+              "type": "string"
+            },
+            {
+              "id": "p2_naira",
+              "name": "amount_naira",
+              "value": "500",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "ffbe2b74-af47-4643-8ecf-33fe8527f4b2",
+      "name": "Set Plan: 3 Hours",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "p3_name",
+              "name": "plan_name",
+              "value": "24 Hours",
+              "type": "string"
+            },
+            {
+              "id": "p3_code",
+              "name": "plan_code",
+              "value": "TIME_24HR",
+              "type": "string"
+            },
+            {
+              "id": "p3_kobo",
+              "name": "amount_kobo",
+              "value": "100000",
+              "type": "string"
+            },
+            {
+              "id": "p3_naira",
+              "name": "amount_naira",
+              "value": "1000",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "d94d143d-7805-4802-9235-75b88c634877",
+      "name": "Set Plan: 24 Hours",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "p4_name",
+              "name": "plan_name",
+              "value": "500MB Data",
+              "type": "string"
+            },
+            {
+              "id": "p4_code",
+              "name": "plan_code",
+              "value": "DATA_500MB",
+              "type": "string"
+            },
+            {
+              "id": "p4_kobo",
+              "name": "amount_kobo",
+              "value": "30000",
+              "type": "string"
+            },
+            {
+              "id": "p4_naira",
+              "name": "amount_naira",
+              "value": "300",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "62f3938c-36f2-4639-bab2-06566306a80c",
+      "name": "Set Plan: 500MB",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "p5_name",
+              "name": "plan_name",
+              "value": "1GB Data",
+              "type": "string"
+            },
+            {
+              "id": "p5_code",
+              "name": "plan_code",
+              "value": "DATA_1GB",
+              "type": "string"
+            },
+            {
+              "id": "p5_kobo",
+              "name": "amount_kobo",
+              "value": "50000",
+              "type": "string"
+            },
+            {
+              "id": "p5_naira",
+              "name": "amount_naira",
+              "value": "500",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "2cccefc7-074f-49cb-af3f-97ee103f709a",
+      "name": "Set Plan: 1GB",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "p6_name",
+              "name": "plan_name",
+              "value": "5GB Data",
+              "type": "string"
+            },
+            {
+              "id": "p6_code",
+              "name": "plan_code",
+              "value": "DATA_5GB",
+              "type": "string"
+            },
+            {
+              "id": "p6_kobo",
+              "name": "amount_kobo",
+              "value": "200000",
+              "type": "string"
+            },
+            {
+              "id": "p6_naira",
+              "name": "amount_naira",
+              "value": "2000",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "e696493c-f0e4-4ccd-aab0-66125b758377",
+      "name": "Set Plan: 5GB",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Hotspot Bot_Menu & Payment Link\n\nTriggered by Telegram messages or inline button taps (callback queries).\nNormalizes input to extract chat ID, user name, and input type.\nRoutes: messages → sends plan selection menu; callbacks → identifies selected plan, sets plan details, calls Paystack to initialize a transaction, and delivers the checkout link to the customer via Telegram.",
+        "height": 1080,
+        "width": 1964,
+        "color": 4
+      },
+      "id": "c5b7d3a2-ca54-4435-9435-f13b5cb99dcb",
+      "name": "Sticky Note 21803978",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -48
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-paystack.paystack",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        432
+      ],
+      "id": "a0f4b545-2687-432f-b79b-9730adac9428",
+      "name": "Initialize a transaction",
+      "credentials": {
+        "paystackApi": {
+          "id": "MZ0KpJ84fKzjxFe7",
+          "name": "lLight test mode"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Telegram Message Received": {
+      "main": [
+        [
+          {
+            "node": "Normalize Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Input": {
+      "main": [
+        [
+          {
+            "node": "Route Input Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Input Type": {
+      "main": [
+        [
+          {
+            "node": "Send Plan Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Route Plan Selection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Plan Selection": {
+      "main": [
+        [
+          {
+            "node": "Set Plan: 1 Hour",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Plan: 3 Hours",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Plan: 24 Hours",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Plan: 500MB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Plan: 1GB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Plan: 5GB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Plan: 1 Hour": {
+      "main": [
+        [
+          {
+            "node": "Generate Paystack Payment Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Paystack Payment Link": {
+      "main": [
+        [
+          {
+            "node": "Send Payment Link to Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Plan: 3 Hours": {
+      "main": [
+        [
+          {
+            "node": "Generate Paystack Payment Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Plan: 24 Hours": {
+      "main": [
+        [
+          {
+            "node": "Generate Paystack Payment Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Plan: 500MB": {
+      "main": [
+        [
+          {
+            "node": "Generate Paystack Payment Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Plan: 1GB": {
+      "main": [
+        [
+          {
+            "node": "Generate Paystack Payment Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Plan: 5GB": {
+      "main": [
+        [
+          {
+            "node": "Generate Paystack Payment Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "df7e3ae6-ba3e-4577-8fc3-857ddf1d135b",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-08T14:28:53.872Z",
+      "createdAt": "2026-08-08T14:28:53.872Z",
+      "role": "workflow:owner",
+      "workflowId": "Wh0ArnHfd5WxIMnu",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

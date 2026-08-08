@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-02T06:49:54.885Z",
+  "updatedAt": "2026-08-07T10:17:48.559Z",
   "createdAt": "2026-06-26T13:36:00.829Z",
   "id": "43d6DriE8KVUcIbw",
   "name": "Hack Automation",
@@ -83,7 +83,9 @@
     },
     {
       "parameters": {
-        "options": {}
+        "options": {
+          "systemMessage": "You are a helpful assistant answering all question regarding AI Automation.\n\nstyle: polite and organised\ntools available: \n- think tool: Use the tool to think about something \n\n- do not side comment \n- do not use em dashes\n- do not use more words than you should\n"
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
@@ -112,7 +114,7 @@
     },
     {
       "parameters": {
-        "model": "inclusionai/ling-3.0-flash:free",
+        "model": "openrouter/free",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
@@ -254,7 +256,7 @@
       }
     ]
   },
-  "versionId": "085a8022-4896-4908-b071-006d101554e6",
+  "versionId": "a5349732-e809-4d07-9a86-c1b9d1155752",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [

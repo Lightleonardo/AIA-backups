@@ -1,0 +1,615 @@
+{
+  "updatedAt": "2026-08-08T20:23:50.713Z",
+  "createdAt": "2026-08-08T19:58:05.899Z",
+  "id": "zuiuB5KhbKeckBiA",
+  "name": "Hotspot Bot B_Payment Confirmation & Voucher Delivery",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "paystack-hotspot",
+        "options": {}
+      },
+      "id": "163353d8-749f-4135-a31e-09c18e128c24",
+      "name": "Paystack Payment Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        96
+      ],
+      "webhookId": "8497b40a-46c0-46c3-ad36-89504e7a1249"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "",
+          "cachedResultName": "Hotspot Transactions"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "paid"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Reference": "={{ $json.body.data.reference }}",
+            "Status": "={{ $json.body.data.status }}",
+            "Amount (Kobo)": "={{ $json.body.data.amount }}",
+            "Plan": "={{ $json.body.data.metadata.plan_name }}",
+            "Telegram Chat ID": "={{ $json.body.data.metadata.telegram_chat_id }}",
+            "Customer": "={{ $json.body.data.metadata.user_name }}",
+            "Gateway Response": "={{ $json.body.data.gateway_response }}",
+            "Paid At": "={{ $json.body.data.paid_at }}"
+          },
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Reference",
+              "displayName": "Reference",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Amount (Kobo)",
+              "displayName": "Amount (Kobo)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Plan",
+              "displayName": "Plan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Telegram Chat ID",
+              "displayName": "Telegram Chat ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Customer",
+              "displayName": "Customer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Gateway Response",
+              "displayName": "Gateway Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Paid At",
+              "displayName": "Paid At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fac5dd81-c52b-42f8-ab11-e5c1ee82ab91",
+      "name": "Log Raw Payment to Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mAWAkTTiGby4AihA",
+          "name": "Light opara"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $(\"Paystack Payment Webhook\").item.json.body.data.status }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "success",
+              "id": "fff86f75-8503-4b91-8172-fcf974c67e3f"
+            },
+            {
+              "leftValue": "={{ $(\"Paystack Payment Webhook\").item.json.body.data.gateway_response }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "Approved",
+              "id": "937737cc-c4f7-4870-8671-b1b1ed16dae8"
+            },
+            {
+              "leftValue": "={{ $(\"Paystack Payment Webhook\").item.json.body.event }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "charge.success",
+              "id": "5e7fb0a2-dfd4-4061-95ca-459046bf5d92"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "af41f522-fd59-4442-b866-a173398314bf",
+      "name": "Validate Payment Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "chat_id",
+              "name": "chat_id",
+              "value": "={{ $(\"Paystack Payment Webhook\").item.json.body.data.metadata.telegram_chat_id }}",
+              "type": "string"
+            },
+            {
+              "id": "user_name",
+              "name": "user_name",
+              "value": "={{ $(\"Paystack Payment Webhook\").item.json.body.data.metadata.user_name }}",
+              "type": "string"
+            },
+            {
+              "id": "plan_name",
+              "name": "plan_name",
+              "value": "={{ $(\"Paystack Payment Webhook\").item.json.body.data.metadata.plan_name }}",
+              "type": "string"
+            },
+            {
+              "id": "plan_code",
+              "name": "plan_code",
+              "value": "={{ $(\"Paystack Payment Webhook\").item.json.body.data.metadata.plan_code }}",
+              "type": "string"
+            },
+            {
+              "id": "amount_naira",
+              "name": "amount_naira",
+              "value": "={{ ($(\"Paystack Payment Webhook\").item.json.body.data.amount / 100).toFixed(2) }}",
+              "type": "string"
+            },
+            {
+              "id": "reference",
+              "name": "reference",
+              "value": "={{ $(\"Paystack Payment Webhook\").item.json.body.data.reference }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c2b6d75b-9a00-4a88-8a4f-cc66aab8d0f2",
+      "name": "Extract Payment Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "<__PLACEHOLDER_VALUE__MikroTik REST API URL — e.g. http://192.168.1.1/rest/ip/hotspot/user__>",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"name\": $json.reference, \"password\": $json.reference.substring(0,8), \"profile\": $json.plan_code, \"comment\": $json.plan_name + \" — \" + $json.user_name } }}",
+        "options": {}
+      },
+      "id": "ab4d2787-4fc6-4f7b-8509-78dc8e410285",
+      "name": "Generate MikroTik Voucher",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        672,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "d66ebc8f-f58a-49ee-84b6-9abd34c4e5b2",
+      "name": "Merge Voucher + Payment Data",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        896,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "=🎉 *Payment Confirmed!*\n\nHere is your WiFi voucher:\n\n📶 *Network:* CaféNet WiFi\n🔑 *Username:* `{{ $json.name }}`\n🔐 *Password:* `{{ $json.password }}`\n📦 *Plan:* {{ $json.plan_name }}\n💰 *Paid:* ₦{{ $json.amount_naira }}\n\n1️⃣ Connect to *CaféNet WiFi*\n2️⃣ Open your browser — the login page will appear\n3️⃣ Enter the username and password above\n\nEnjoy your session! ☕",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "c7e753db-106c-465c-937b-0d1673d881fa",
+      "name": "Send Voucher to Customer",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        192
+      ],
+      "webhookId": "1decf3ee-1579-4d90-9cc3-464346c84b91",
+      "credentials": {
+        "telegramApi": {
+          "id": "VuXGuzAcWDEMlSvx",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "",
+          "cachedResultName": "Hotspot Transactions"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Transactions"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Telegram Chat ID": "={{ $(\"Merge Voucher + Payment Data\").item.json.chat_id }}",
+            "Customer Name": "={{ $(\"Merge Voucher + Payment Data\").item.json.user_name }}",
+            "Plan": "={{ $(\"Merge Voucher + Payment Data\").item.json.plan_name }}",
+            "Amount (₦)": "={{ $(\"Merge Voucher + Payment Data\").item.json.amount_naira }}",
+            "Voucher Username": "={{ $(\"Merge Voucher + Payment Data\").item.json.name }}",
+            "Voucher Password": "={{ $(\"Merge Voucher + Payment Data\").item.json.password }}",
+            "Reference": "={{ $(\"Merge Voucher + Payment Data\").item.json.reference }}",
+            "Status": "Confirmed"
+          },
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Telegram Chat ID",
+              "displayName": "Telegram Chat ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Customer Name",
+              "displayName": "Customer Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Plan",
+              "displayName": "Plan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Amount (₦)",
+              "displayName": "Amount (₦)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Voucher Username",
+              "displayName": "Voucher Username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Voucher Password",
+              "displayName": "Voucher Password",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Reference",
+              "displayName": "Reference",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dad8c96d-39d8-4c1a-aca9-de09b08c986d",
+      "name": "Log Confirmed Transaction",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1344,
+        192
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mAWAkTTiGby4AihA",
+          "name": "Light opara"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "<__PLACEHOLDER_VALUE__Discord Webhook URL for admin sale alerts__>",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"content\": \"💰 **New Hotspot Sale**\\n\\n**Customer:** \" + $(\"Merge Voucher + Payment Data\").item.json.user_name + \"\\n**Plan:** \" + $(\"Merge Voucher + Payment Data\").item.json.plan_name + \"\\n**Amount:** ₦\" + $(\"Merge Voucher + Payment Data\").item.json.amount_naira + \"\\n**Voucher:** \" + $(\"Merge Voucher + Payment Data\").item.json.name + \"\\n**Time:** \" + $now.toFormat(\"dd MMM yyyy, HH:mm\") } }}",
+        "options": {}
+      },
+      "id": "dbcb401d-d33a-4687-acfb-1820bd1cd32f",
+      "name": "Notify Admin via Discord",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1568,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Hotspot Bot_Payment Confirmation & Voucher Delivery\n\nTriggered by Paystack charge.success webhook.\nForks on arrival: logs raw event to Google Sheets (forensic record) and runs validation in parallel.\nValidation path: checks status = success + gateway_response = Approved + event = charge.success, extracts metadata, calls MikroTik REST API to generate a voucher, merges voucher with payment data, delivers credentials to customer via Telegram, logs confirmed transaction to Google Sheets, and alerts admin via Discord webhook.",
+        "height": 616,
+        "width": 1836,
+        "color": 5
+      },
+      "id": "240deb91-bb6f-439a-a543-5c3f39001504",
+      "name": "Sticky Note 662f25aa",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -192
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-paystack.paystackTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        256
+      ],
+      "id": "31fdf484-faac-42f8-b6ad-9bf80db75c1c",
+      "name": "Paystack Trigger",
+      "webhookId": "5a93a1a3-c380-488a-a66b-b4f10e2561c4",
+      "credentials": {
+        "paystackApi": {
+          "id": "MZ0KpJ84fKzjxFe7",
+          "name": "lLight test mode"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Paystack Payment Webhook": {
+      "main": [
+        [
+          {
+            "node": "Log Raw Payment to Sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Validate Payment Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Payment Success": {
+      "main": [
+        [
+          {
+            "node": "Extract Payment Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Payment Data": {
+      "main": [
+        [
+          {
+            "node": "Generate MikroTik Voucher",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate MikroTik Voucher": {
+      "main": [
+        [
+          {
+            "node": "Merge Voucher + Payment Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Voucher + Payment Data": {
+      "main": [
+        [
+          {
+            "node": "Merge Voucher + Payment Data",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Send Voucher to Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Voucher to Customer": {
+      "main": [
+        [
+          {
+            "node": "Log Confirmed Transaction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Confirmed Transaction": {
+      "main": [
+        [
+          {
+            "node": "Notify Admin via Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "40f5079b-6609-41a8-bbbb-8f159e946d73",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-08T19:58:05.899Z",
+      "createdAt": "2026-08-08T19:58:05.899Z",
+      "role": "workflow:owner",
+      "workflowId": "zuiuB5KhbKeckBiA",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

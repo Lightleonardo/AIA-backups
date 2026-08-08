@@ -1,0 +1,369 @@
+{
+  "updatedAt": "2026-08-08T20:21:48.189Z",
+  "createdAt": "2026-08-08T19:59:30.332Z",
+  "id": "IU9EI8eUFLScsobE",
+  "name": "Hotspot Bot C_Admin Monitoring",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "3dabad1b-2089-4bd2-b81a-58303430b743",
+      "name": "Run Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "url": "<__PLACEHOLDER_VALUE__MikroTik REST API URL — e.g. http://192.168.1.1/rest/ip/hotspot/user__>",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {}
+      },
+      "id": "233e6e82-9b98-48ac-b094-dde26d856bb7",
+      "name": "Check MikroTik Voucher Pool",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        224,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "voucher_count",
+              "name": "voucher_count",
+              "value": "={{ $input.all().length }}",
+              "type": "number"
+            },
+            {
+              "id": "checked_at",
+              "name": "checked_at",
+              "value": "={{ $now.toFormat(\"dd MMM yyyy, HH:mm\") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d77af7da-fc1c-4a85-9735-a724ef662b39",
+      "name": "Count Active Vouchers",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        96
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.voucher_count }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              },
+              "rightValue": 10,
+              "id": "b64f1699-3bcf-4369-94bb-fec764547404"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8dafad4c-ef04-472a-bab4-0e0a6a330aa3",
+      "name": "Is Voucher Pool Low?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "<__PLACEHOLDER_VALUE__Discord Webhook URL for admin alerts__>",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"content\": \"⚠️ **Low Voucher Alert**\\n\\nOnly **\" + $(\"Count Active Vouchers\").item.json.voucher_count + \" vouchers** remaining in the MikroTik pool.\\nPlease generate more vouchers to avoid service interruption.\\n\\nChecked at: \" + $(\"Count Active Vouchers\").item.json.checked_at } }}",
+        "options": {}
+      },
+      "id": "b7aae5d0-a193-4804-807f-2173b84fce6b",
+      "name": "Alert Admin — Low Voucher Pool",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        896,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "",
+          "cachedResultName": "Hotspot Transactions"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Health Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Voucher Count": "={{ $(\"Count Active Vouchers\").item.json.voucher_count }}",
+            "Status": "LOW — Alert Sent"
+          },
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Voucher Count",
+              "displayName": "Voucher Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a41e022e-c9a0-41f2-bbf4-e909d80c4ba6",
+      "name": "Log Health Check (Low)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mAWAkTTiGby4AihA",
+          "name": "Light opara"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "",
+          "cachedResultName": "Hotspot Transactions"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Health Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Voucher Count": "={{ $(\"Count Active Vouchers\").item.json.voucher_count }}",
+            "Status": "OK"
+          },
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Voucher Count",
+              "displayName": "Voucher Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c5c8f5d9-88f3-45b2-a8d6-e553bd114715",
+      "name": "Log Health Check (OK)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        192
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mAWAkTTiGby4AihA",
+          "name": "Light opara"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Hotspot Bot — Admin Monitoring\n\nRuns every 6 hours on a schedule.\nCalls the MikroTik REST API to fetch the current voucher pool, counts active vouchers, and checks if the count is below 10.\nIf low: sends a Discord alert to admin and logs LOW status to Health Log.\nIf OK: logs OK status to Health Log. Every run is recorded for trend tracking.",
+        "height": 424,
+        "width": 1388,
+        "color": 3
+      },
+      "id": "c8da5090-155a-46df-80d3-92448092f1cb",
+      "name": "Sticky Note 79aba3da",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        -96
+      ]
+    }
+  ],
+  "connections": {
+    "Run Every 6 Hours": {
+      "main": [
+        [
+          {
+            "node": "Check MikroTik Voucher Pool",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check MikroTik Voucher Pool": {
+      "main": [
+        [
+          {
+            "node": "Count Active Vouchers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Count Active Vouchers": {
+      "main": [
+        [
+          {
+            "node": "Is Voucher Pool Low?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Voucher Pool Low?": {
+      "main": [
+        [
+          {
+            "node": "Alert Admin — Low Voucher Pool",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Health Check (OK)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Admin — Low Voucher Pool": {
+      "main": [
+        [
+          {
+            "node": "Log Health Check (Low)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "pinData": {},
+  "versionId": "c9298592-3d08-41cb-af25-b5b1b8a798fb",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-08T19:59:30.332Z",
+      "createdAt": "2026-08-08T19:59:30.332Z",
+      "role": "workflow:owner",
+      "workflowId": "IU9EI8eUFLScsobE",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

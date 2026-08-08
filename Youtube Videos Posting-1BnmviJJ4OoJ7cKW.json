@@ -1,0 +1,35 @@
+{
+  "updatedAt": "2026-08-07T08:01:47.170Z",
+  "createdAt": "2026-08-07T07:50:54.758Z",
+  "id": "1BnmviJJ4OoJ7cKW",
+  "name": "Youtube Videos Posting",
+  "active": false,
+  "isArchived": true,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "66a34d70-5e22-4985-a4ce-9172d87e4afd",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-07T07:50:54.758Z",
+      "createdAt": "2026-08-07T07:50:54.758Z",
+      "role": "workflow:owner",
+      "workflowId": "1BnmviJJ4OoJ7cKW",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

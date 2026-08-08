@@ -1,0 +1,196 @@
+{
+  "updatedAt": "2026-08-07T07:50:30.941Z",
+  "createdAt": "2026-08-07T07:49:31.577Z",
+  "id": "ec3SJdULeZjsDVcB",
+  "name": "Feedback Collection Form",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e703a2dc-2dff-4200-bd41-67f78888d77d",
+      "name": "When chat message received",
+      "webhookId": "01316140-f5e4-4e01-9dae-eedb7b8cd574"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=#Role\n\nYou are a personal assistant AI Agent. Your primary role is to send emails. You have access to two tools: Contacts and Gmail_Tool.\n\n##Tools\n\n1.Contacts\n\nUse this tool when you need to look up contact information like an email address or phone number. You need to use this tool BEFORE sending an email or BEFORE getting emails.\n\n\n2. Gmail_Tool:\n\nUse this for handling all email-related actions, like sending emails, reading emails, or forwarding emails.\n\n\n- Keep emails professional.\n\n- Format nicely the Body of the email with line breaks and clear structure.\n\n\n- Always sing off as \nBest regards,\nDamian\n\n\n\nHere is the current time/date: {{ $now.format('DD')}}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        224,
+        0
+      ],
+      "id": "76e2b06a-90dd-4b66-876e-17538fd2abda",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        208
+      ],
+      "id": "5422346f-3fb7-4f2f-ab0d-3dc009be6d61",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        240
+      ],
+      "id": "fdfd216c-d032-4515-b44e-234d86b6c1d4",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        400,
+        208
+      ],
+      "id": "7099fb25-5473-4ba6-ac8a-3548d1856eb5",
+      "name": "Gmail_Tools",
+      "webhookId": "80f248f3-7515-4736-89ed-469a38a71f6e"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "10tu3dCMDnBRdObH4w8x5zCZn9NwGeKCviXfEfTogD-Y",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10tu3dCMDnBRdObH4w8x5zCZn9NwGeKCviXfEfTogD-Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10tu3dCMDnBRdObH4w8x5zCZn9NwGeKCviXfEfTogD-Y/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        640,
+        160
+      ],
+      "id": "3e47c6d5-eeb5-4478-bdb1-8ccdc56e107d",
+      "name": "Contacts"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail_Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "c3fb2474-4a21-4166-88d2-4ce99b20d7fb",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-07T07:49:31.577Z",
+      "createdAt": "2026-08-07T07:49:31.577Z",
+      "role": "workflow:owner",
+      "workflowId": "ec3SJdULeZjsDVcB",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

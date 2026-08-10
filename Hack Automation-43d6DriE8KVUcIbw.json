@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-07T10:17:48.559Z",
+  "updatedAt": "2026-08-09T10:16:11.096Z",
   "createdAt": "2026-06-26T13:36:00.829Z",
   "id": "43d6DriE8KVUcIbw",
   "name": "Hack Automation",
@@ -174,6 +174,26 @@
           "name": "light opara account"
         }
       }
+    },
+    {
+      "parameters": {
+        "resource": "spreadsheet",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        320,
+        240
+      ],
+      "id": "ca2b810e-3fa2-418d-b963-ef6b8c901845",
+      "name": "Create spreadsheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mAWAkTTiGby4AihA",
+          "name": "Light opara"
+        }
+      }
     }
   ],
   "connections": {
@@ -235,6 +255,17 @@
       "ai_languageModel": [
         []
       ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Create spreadsheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -256,7 +287,7 @@
       }
     ]
   },
-  "versionId": "a5349732-e809-4d07-9a86-c1b9d1155752",
+  "versionId": "2b7ad941-cead-4624-a6ca-b0c748d3d000",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [

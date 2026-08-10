@@ -1,0 +1,51 @@
+{
+  "updatedAt": "2026-08-10T12:45:47.978Z",
+  "createdAt": "2026-08-10T12:45:20.174Z",
+  "id": "B9qh04oDacw5qbUZ",
+  "name": "My workflow 5",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8d48497c-29b2-4c81-81a6-3d5ddfa669bc",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "21bf3556-5f3b-4e63-9a0a-03e4815d6471",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-10T12:45:20.174Z",
+      "createdAt": "2026-08-10T12:45:20.174Z",
+      "role": "workflow:owner",
+      "workflowId": "B9qh04oDacw5qbUZ",
+      "projectId": "ZFnZkZDMTyLt0Ceo"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

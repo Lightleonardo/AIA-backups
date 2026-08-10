@@ -1,0 +1,123 @@
+{
+  "updatedAt": "2026-08-10T12:54:33.121Z",
+  "createdAt": "2026-08-10T12:36:17.681Z",
+  "id": "HUQvtYbAtA3THLZl",
+  "name": "My workflow 5",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1F9pwjIgm5LA1mh9dJfsMMTK3U1NC3dIpEXlM88riX3U",
+          "mode": "list",
+          "cachedResultName": "Untitled form (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1F9pwjIgm5LA1mh9dJfsMMTK3U1NC3dIpEXlM88riX3U/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 700565642,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1F9pwjIgm5LA1mh9dJfsMMTK3U1NC3dIpEXlM88riX3U/edit#gid=700565642"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b4c9b426-4818-4417-a066-6291f2af5c5a",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "333eFFOQ66yI8jov",
+          "name": "Daniel Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3d61c7f5-a37b-46c5-bbfe-6d3ef90092c2",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "9f3d3891-e473-41c3-8e2b-6fe0130641ff",
+      "name": "If"
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "5a95803e-f651-4d26-bcab-c9519c6086cc",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-10T12:36:17.681Z",
+      "createdAt": "2026-08-10T12:36:17.681Z",
+      "role": "workflow:owner",
+      "workflowId": "HUQvtYbAtA3THLZl",
+      "projectId": "ZFnZkZDMTyLt0Ceo"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

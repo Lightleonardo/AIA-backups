@@ -1,0 +1,248 @@
+{
+  "updatedAt": "2026-08-14T20:10:16.586Z",
+  "createdAt": "2026-08-14T19:23:39.950Z",
+  "id": "ciUOMnS0ZNzW3S1V",
+  "name": "uget Chatbot",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2d2c2caa-7857-44b3-98f5-f9c27f0cd6d9",
+      "name": "When chat message received",
+      "webhookId": "a0c17eb3-43db-4c2b-b7be-0ea5d96b84c4"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant at UGET Technologies\nstyle: be respectful and precise\ninstruction: guide users through there early stage using n8n (the automation platform)\ntools: you have A technician under you how answers complex n8n questions and is able to search the web for recent updates\nrules: do not mention stray away from n8n \ndo not comment \ndo not use emoji or em dashes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "4a3f1306-6b44-42d5-ad00-95dcadd55682",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        176
+      ],
+      "id": "0ba86d4e-01a6-4e05-abb9-a68771b11f66",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "8ThwjbFA7ss1hLCR",
+          "name": "lightleo gemini"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.3,
+      "position": [
+        560,
+        0
+      ],
+      "id": "b3b18e66-a9ac-41c4-9aef-7ae0e4af4758",
+      "name": "Chat",
+      "webhookId": "7ed5ed6f-20d5-4799-bd94-abc2f3341651"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        288,
+        176
+      ],
+      "id": "aeeb3d59-d9cc-4cac-9a6f-576795705635",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "openrouter/free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        416,
+        384
+      ],
+      "id": "1c5860f3-ee87-4dba-8e6a-69636b981dd7",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "DZUhuwoq7WBAd1mC",
+          "name": "Light opara"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        576,
+        400
+      ],
+      "id": "525da533-99c1-45f4-af6a-edbbf700e134",
+      "name": "Search in Tavily",
+      "credentials": {
+        "tavilyApi": {
+          "id": "7vjxEqA9rlTKseln",
+          "name": "lightleo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "the Technician\nAI Agent that can call other tools",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "You are a n8n specialist focused on debugging and solving complex n8n errors\n\nyou are serving Uget assistant with advance technical work\ntool: you have tavily which lets you search the web"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 3,
+      "position": [
+        416,
+        256
+      ],
+      "id": "d935b0a1-fa8b-4bb3-ac82-823758072372",
+      "name": "the technician"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "the technician",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search in Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "the technician",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "the technician": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "ad3ee049-59cf-4cd2-912c-10520c6e7913",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-14T19:23:39.950Z",
+      "createdAt": "2026-08-14T19:23:39.950Z",
+      "role": "workflow:owner",
+      "workflowId": "ciUOMnS0ZNzW3S1V",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

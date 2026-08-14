@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-09T10:16:11.096Z",
+  "updatedAt": "2026-08-14T18:48:29.567Z",
   "createdAt": "2026-06-26T13:36:00.829Z",
   "id": "43d6DriE8KVUcIbw",
   "name": "Hack Automation",
@@ -27,7 +27,7 @@
       "credentials": {
         "telegramApi": {
           "id": "kEJrki3Nk1nu4AXK",
-          "name": "Automated_Agent1"
+          "name": "Automated_Agent"
         }
       }
     },
@@ -287,7 +287,7 @@
       }
     ]
   },
-  "versionId": "2b7ad941-cead-4624-a6ca-b0c748d3d000",
+  "versionId": "484f7ec3-4a2b-423b-829c-dbc64c8a8e98",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [

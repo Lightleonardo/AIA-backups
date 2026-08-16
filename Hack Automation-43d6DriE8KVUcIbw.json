@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-14T18:48:29.567Z",
+  "updatedAt": "2026-08-16T15:20:18.736Z",
   "createdAt": "2026-06-26T13:36:00.829Z",
   "id": "43d6DriE8KVUcIbw",
   "name": "Hack Automation",
@@ -53,8 +53,8 @@
       "webhookId": "8063cc3f-9d4f-46b8-b0bd-907544b57c46",
       "credentials": {
         "telegramApi": {
-          "id": "VuXGuzAcWDEMlSvx",
-          "name": "Telegram account"
+          "id": "kEJrki3Nk1nu4AXK",
+          "name": "Automated_Agent"
         }
       }
     },
@@ -194,6 +194,17 @@
           "name": "Light opara"
         }
       }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -64
+      ],
+      "id": "6802ee32-fb3c-442e-a106-126e0a9a79a0",
+      "name": "When clicking ‘Execute workflow’"
     }
   ],
   "connections": {
@@ -266,6 +277,17 @@
           }
         ]
       ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -278,16 +300,23 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {
-    "Send a text message": [
+    "When clicking ‘Execute workflow’": [
       {
-        "json": "<!DOCTYPE html>\n<html class=\"\" data-theme=\"light\">\n  <head>\n    <meta charset=\"utf-8\">\n    <title>Page not found</title>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <meta property=\"description\" content=\"\">\n    <meta property=\"og:title\" content=\"Page not found\">\n    <meta property=\"og:image\" content=\"\">\n    <meta property=\"og:description\" content=\"\">\n    <link rel=\"icon\" type=\"image/svg+xml\" href=\"/img/website_icon.svg?4\">\n<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/img/apple-touch-icon.png\">\n<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/img/favicon-32x32.png\">\n<link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/img/favicon-16x16.png\">\n<link rel=\"alternate icon\" href=\"/img/favicon.ico\" type=\"image/x-icon\" />\n    <link href=\"/css/bootstrap.min.css?3\" rel=\"stylesheet\">\n    \n    <link href=\"/css/telegram.css?252\" rel=\"stylesheet\" media=\"screen\">\n    <link href=\"/css/telegram-theme.css?5\" rel=\"stylesheet\" media=\"screen\">\n    <style>\n    </style>\n  </head>\n  <body class=\"preload\">\n    <button class=\"theme-toggle theme-toggle--static\" type=\"button\" title=\"Toggle theme\" aria-label=\"Toggle light/dark theme\"></button>\n    <div class=\"dev_page_wrap\">\n      <div class=\"dev_page_head navbar navbar-static-top navbar-tg\">\n        <div class=\"navbar-inner\">\n          <div class=\"container clearfix\">\n            <ul class=\"nav navbar-nav navbar-right hidden-xs\"><li class=\"navbar-twitter hidden-xs\"><a href=\"https://x.com/telegram\" target=\"_blank\" data-track=\"Follow/Twitter\" onclick=\"trackDlClick(this, event)\"><i class=\"icon icon-twitter\"></i> Follow on X</a></li></ul>\n            <ul class=\"nav navbar-nav\">\n              <li><a href=\"//telegram.org/\">Home</a></li>\n<li class=\"hidden-xs\"><a href=\"//telegram.org/faq\">FAQ</a></li>\n<li class=\"hidden-xs\"><a href=\"//telegram.org/apps\">Apps</a></li>\n<li class=\"\"><a href=\"/api\">API</a></li>\n<li class=\"\"><a href=\"/mtproto\">Protocol</a></li>\n<li class=\"\"><a href=\"/schema\">Schema</a></li>\n            </ul>\n          </div>\n        </div>\n      </div>\n      <div class=\"container clearfix\">\n        <div class=\"dev_page\">\n          <div id=\"dev_page_content_wrap\" class=\" \">\n  <div class=\"dev_page_bread_crumbs\"></div>\n  <h1 id=\"dev_page_title\">Page not found</h1>\n  \n  <div id=\"dev_page_content\">The page has not been saved</div>\n  \n</div>\n          \n        </div>\n      </div>\n      <div class=\"footer_wrap\">\n  <div class=\"footer_columns_wrap footer_desktop\">\n    <div class=\"footer_column footer_column_telegram\">\n      <h5>Telegram</h5>\n      <div class=\"footer_telegram_description\"></div>\n      Telegram is a cloud-based mobile and desktop messaging app with a focus on security and speed.\n    </div>\n\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/faq\">About</a></h5>\n      <ul>\n        <li><a href=\"//telegram.org/faq\">FAQ</a></li>\n        <li><a href=\"//telegram.org/privacy\">Privacy</a></li>\n        <li><a href=\"//telegram.org/press\">Press</a></li>\n      </ul>\n    </div>\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/apps#mobile-apps\">Mobile Apps</a></h5>\n      <ul>\n        <li><a href=\"//telegram.org/dl/ios\">iPhone/iPad</a></li>\n        <li><a href=\"//telegram.org/android\">Android</a></li>\n        <li><a href=\"//telegram.org/dl/web\">Mobile Web</a></li>\n      </ul>\n    </div>\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/apps#desktop-apps\">Desktop Apps</a></h5>\n      <ul>\n        <li><a href=\"//desktop.telegram.org/\">PC/Mac/Linux</a></li>\n        <li><a href=\"//macos.telegram.org/\">macOS</a></li>\n        <li><a href=\"//telegram.org/dl/web\">Web-browser</a></li>\n      </ul>\n    </div>\n    <div class=\"footer_column footer_column_platform\">\n      <h5><a href=\"/\">Platform</a></h5>\n      <ul>\n        <li><a href=\"/api\">API</a></li>\n        <li><a href=\"//translations.telegram.org/\">Translations</a></li>\n        <li><a href=\"//instantview.telegram.org/\">Instant View</a></li>\n      </ul>\n    </div>\n  </div>\n  <div class=\"footer_columns_wrap footer_mobile\">\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/faq\">About</a></h5>\n    </div>\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/blog\">Blog</a></h5>\n    </div>\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/press\">Press</a></h5>\n    </div>\n    <div class=\"footer_column\">\n      <h5><a href=\"//telegram.org/safety\">Safety</a></h5>\n    </div>\n  </div>\n</div>\n    </div>\n    <script src=\"/js/main.js?49\"></script>\n    <script src=\"/js/tgsticker.js?32\"></script>\n\n    <script src=\"/js/main-theme.js?6\"></script>\n    <script>backToTopInit(\"Go up\");\nremovePreloadInit();\n</script>\n  </body>\n</html>\n<!-- page generated in 3.97ms -->\n",
-        "pairedItem": {
-          "item": 0
+        "json": {
+          "name": "First item",
+          "code": 1
+        }
+      },
+      {
+        "json": {
+          "name": "Second item",
+          "code": 2,
+          "message": "testing"
         }
       }
     ]
   },
-  "versionId": "484f7ec3-4a2b-423b-829c-dbc64c8a8e98",
+  "versionId": "090d2dad-de41-4545-be05-4cb321be4392",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [

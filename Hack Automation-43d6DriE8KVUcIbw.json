@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-16T15:20:18.736Z",
+  "updatedAt": "2026-08-22T17:08:34.991Z",
   "createdAt": "2026-06-26T13:36:00.829Z",
   "id": "43d6DriE8KVUcIbw",
   "name": "Hack Automation",
@@ -29,7 +29,8 @@
           "id": "kEJrki3Nk1nu4AXK",
           "name": "Automated_Agent"
         }
-      }
+      },
+      "disabled": true
     },
     {
       "parameters": {
@@ -38,7 +39,7 @@
         "additionalFields": {
           "appendAttribution": false,
           "disable_notification": false,
-          "disable_web_page_preview": true,
+          "disable_web_page_preview": false,
           "parse_mode": "MarkdownV2"
         }
       },
@@ -94,7 +95,8 @@
         240
       ],
       "id": "389cec76-dbaf-4c91-a0f2-28950c0e4f6d",
-      "name": "AI Agent"
+      "name": "AI Agent",
+      "disabled": true
     },
     {
       "parameters": {
@@ -110,7 +112,8 @@
       ],
       "id": "4c0204e6-ded8-4557-9f8a-d929a55bb7c6",
       "name": "When chat message received",
-      "webhookId": "89cb5e25-3dce-49c0-8b5c-1d1a3145936c"
+      "webhookId": "89cb5e25-3dce-49c0-8b5c-1d1a3145936c",
+      "disabled": true
     },
     {
       "parameters": {
@@ -153,7 +156,8 @@
         416
       ],
       "id": "271c024f-4f86-44fa-93c1-2dc12163b3a9",
-      "name": "Simple Memory"
+      "name": "Simple Memory",
+      "disabled": true
     },
     {
       "parameters": {
@@ -173,7 +177,8 @@
           "id": "EEoGIAWGfOtmKpRX",
           "name": "light opara account"
         }
-      }
+      },
+      "disabled": true
     },
     {
       "parameters": {
@@ -193,18 +198,8 @@
           "id": "mAWAkTTiGby4AihA",
           "name": "Light opara"
         }
-      }
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        16,
-        -64
-      ],
-      "id": "6802ee32-fb3c-442e-a106-126e0a9a79a0",
-      "name": "When clicking ‘Execute workflow’"
+      },
+      "disabled": true
     }
   ],
   "connections": {
@@ -277,17 +272,6 @@
           }
         ]
       ]
-    },
-    "When clicking ‘Execute workflow’": {
-      "main": [
-        [
-          {
-            "node": "Send a text message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "settings": {
@@ -295,30 +279,18 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {
-    "When clicking ‘Execute workflow’": [
-      {
-        "json": {
-          "name": "First item",
-          "code": 1
-        }
-      },
-      {
-        "json": {
-          "name": "Second item",
-          "code": 2,
-          "message": "testing"
-        }
-      }
-    ]
-  },
-  "versionId": "090d2dad-de41-4545-be05-4cb321be4392",
+  "pinData": {},
+  "versionId": "5252cc4d-f37b-42c5-9651-9f140710c759",
   "activeVersionId": null,
-  "triggerCount": 0,
+  "triggerCount": 1,
   "shared": [
     {
       "updatedAt": "2026-06-26T13:36:00.829Z",

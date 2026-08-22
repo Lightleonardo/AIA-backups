@@ -1,0 +1,290 @@
+{
+  "updatedAt": "2026-08-22T15:26:44.047Z",
+  "createdAt": "2026-08-21T18:07:13.916Z",
+  "id": "mUy5DEMOTi1fagQE",
+  "name": "Daily AI Automation Jobs → Discord",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "f3e2e01c-71b9-428a-a5ee-3b7c2db4fde0",
+      "name": "Daily 08:00 Trigger (Africa/Lagos)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.arbeitnow.com/api/job-board-api",
+        "options": {}
+      },
+      "id": "60a2cef5-a1f0-46ad-a997-25ed537689a6",
+      "name": "Fetch Jobs from Arbeitnow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        528,
+        304
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json;\nconst jobs = Array.isArray(body && body.data) ? body.data : [];\nconst nowSec = Math.floor(Date.now() / 1000);\nconst cutoff = nowSec - 24 * 60 * 60;\nconst AI_KEYWORDS = /\\bai\\b|artificial intelligence|automation|machine learning|ml engineer|\\bllm\\b|\\bnlp\\b|generative ai/i;\nconst GERMAN_TITLE_MARKERS = /m\\/w\\/d/i;\nconst GERMAN_WORD_RE = /\\b(und|der|die|das|f\\u00fcr|mit|wir|sie)\\b/gi;\nfunction stripHtml(value) {\n  return String(value || '').replace(/<[^>]*>/g, ' ').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\\s+/g, ' ').trim();\n}\nfunction germanWordCount(text) {\n  const found = String(text || '').match(GERMAN_WORD_RE);\n  return found ? found.length : 0;\n}\nfunction toUnixSeconds(value) {\n  if (value === null || value === undefined) return 0;\n  if (typeof value === 'number') return value > 1e12 ? Math.floor(value / 1000) : Math.floor(value);\n  const parsed = Date.parse(String(value));\n  return Number.isNaN(parsed) ? 0 : Math.floor(parsed / 1000);\n}\nconst matched = [];\nfor (const job of jobs) {\n  if (!job || job.remote !== true) continue;\n  const rawCreated = job['created_at (unix timestamp seconds)'] !== undefined ? job['created_at (unix timestamp seconds)'] : job.created_at;\n  const createdSec = toUnixSeconds(rawCreated);\n  if (!createdSec || createdSec < cutoff) continue;\n  const title = String(job.title || '');\n  const tagText = Array.isArray(job.tags) ? job.tags.join(' ') : String(job.tags || '');\n  if (!AI_KEYWORDS.test(title) && !AI_KEYWORDS.test(tagText)) continue;\n  if (GERMAN_TITLE_MARKERS.test(title)) continue;\n  const cleanDescription = stripHtml(job.description);\n  if (germanWordCount(cleanDescription.slice(0, 1200)) >= 5) continue;\n  matched.push({ title: title, company: job.company_name || 'Unknown company', location: job.location || 'Remote', url: job.url || '', tags: Array.isArray(job.tags) ? job.tags.slice(0, 6).join(', ') : '', snippet: cleanDescription.slice(0, 100) });\n}\nif (matched.length === 0) {\n  return [{ json: { noJobs: true, checkedJobs: jobs.length } }];\n}\nreturn matched.map(function (job) { return { json: job }; });"
+      },
+      "id": "def48b35-a45d-4a4c-b3d1-7337aa1c2de2",
+      "name": "Filter: Remote + Last 24h + AI Keywords + English",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "id": "d7915d8b-d937-4e64-988e-256c210b5c61",
+      "name": "Keep Top 5 Jobs",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(function (item) { return item.json; });\nconst isNoJobs = items.length === 1 && items[0] && items[0].noJobs === true;\nconst embed = {\n  title: '\\ud83e\\udd16 AI Automation Jobs - Daily Digest',\n  color: 5814783,\n  footer: { text: 'Source: Arbeitnow' },\n  timestamp: new Date().toISOString()\n};\nif (isNoJobs) {\n  embed.description = 'No new remote AI/Automation jobs were posted in the last 24 hours. Check back tomorrow!';\n  embed.color = 15105570;\n} else {\n  embed.fields = items.map(function (job) {\n    const valueLines = ['**' + (job.company || 'Unknown company') + '** \\u00b7 ' + (job.location || 'Remote'), '[Apply](' + (job.url || '') + ')'];\n    if (job.snippet) valueLines.push('> ' + job.snippet);\n    return { name: job.title || 'Untitled role', value: valueLines.join('\\n'), inline: false };\n  });\n}\nreturn [{ json: { discordPayload: { username: 'Job Scout', embeds: [embed] }, jobCount: isNoJobs ? 0 : items.length } }];"
+      },
+      "id": "0ea05673-8524-4b56-96ef-f5e7e211bfeb",
+      "name": "Build Discord Embed Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{ JSON.stringify($json.discordPayload) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1616,
+        304
+      ],
+      "id": "1a654265-1e4a-46c7-9339-0f3071839e2c",
+      "name": "send to job channel",
+      "webhookId": "f9c723ac-58c4-47c3-8469-7dc2fd1b483a",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "2yD6iJYs5cU49tUC",
+          "name": "job opps"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.ashbyhq.com/posting-api/job-board/OpenAI?includeCompensation=true",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 5
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        368,
+        112
+      ],
+      "id": "7edc7c98-4fcb-4ae7-a9c9-583c8cf1064d",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "id": "7ec06945-5adf-43b0-bb69-592ab0c74c9d",
+      "name": "Keep Top 5 Jobs1",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        912,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{ JSON.stringify($json.discordPayload) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        112
+      ],
+      "id": "d7c9df25-6e52-4b57-87f9-6208ecc260e2",
+      "name": "send to job channel1",
+      "webhookId": "f9c723ac-58c4-47c3-8469-7dc2fd1b483a",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "2yD6iJYs5cU49tUC",
+          "name": "job opps"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        176,
+        112
+      ],
+      "id": "1b4cb5c8-7961-4dce-8048-35c2f5f5a4bb",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "connections": {
+    "Daily 08:00 Trigger (Africa/Lagos)": {
+      "main": [
+        [
+          {
+            "node": "Fetch Jobs from Arbeitnow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Jobs from Arbeitnow": {
+      "main": [
+        [
+          {
+            "node": "Filter: Remote + Last 24h + AI Keywords + English",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter: Remote + Last 24h + AI Keywords + English": {
+      "main": [
+        [
+          {
+            "node": "Keep Top 5 Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep Top 5 Jobs": {
+      "main": [
+        [
+          {
+            "node": "Build Discord Embed Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Discord Embed Payload": {
+      "main": [
+        [
+          {
+            "node": "send to job channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep Top 5 Jobs1": {
+      "main": [
+        [
+          {
+            "node": "send to job channel1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Keep Top 5 Jobs1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "cb7f911c-9030-4734-bc65-46b43fd3240a",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-21T18:07:13.916Z",
+      "createdAt": "2026-08-21T18:07:13.916Z",
+      "role": "workflow:owner",
+      "workflowId": "mUy5DEMOTi1fagQE",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

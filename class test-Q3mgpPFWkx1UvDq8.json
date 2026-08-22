@@ -1,0 +1,298 @@
+{
+  "updatedAt": "2026-08-22T17:05:10.342Z",
+  "createdAt": "2026-08-22T16:15:54.203Z",
+  "id": "Q3mgpPFWkx1UvDq8",
+  "name": "class test",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1WSnWK3XiWiVuus9K6IrMB-XoUjOuvi9YmLf7WjdyAkU",
+          "mode": "list",
+          "cachedResultName": "Light's Fireflies Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WSnWK3XiWiVuus9K6IrMB-XoUjOuvi9YmLf7WjdyAkU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1432678856,
+          "mode": "list",
+          "cachedResultName": "Submissions",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WSnWK3XiWiVuus9K6IrMB-XoUjOuvi9YmLf7WjdyAkU/edit#gid=1432678856"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        0
+      ],
+      "id": "c47f270d-7d25-40ba-8634-e1527557b388",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mAWAkTTiGby4AihA",
+          "name": "Light opara"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=full name : {{ $json['Full Name'] }}\nrole: {{ $json.role }}\ntype:{{ $json['Submission Type'] }}\nsubject and reason for leave:\n{{ $json.Subject }}\n{{ $json.Details }}",
+        "options": {
+          "systemMessage": "=You are a help desk/ receptionist at Uget technologies.\nyou will be receiving leave request from employees, you are to write a reply email based on the status : {{ $json.Status }}, to the ceo/boss informing him of the submission. \nnote: C.E.O name is Victor\ndo not side comment \n \n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "745d0884-0651-487d-a911-9ed0be1bb0b6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openrouter/free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        496,
+        208
+      ],
+      "id": "3a45a48f-a869-4285-8abb-0653a00dc6ff",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "DZUhuwoq7WBAd1mC",
+          "name": "Light opara"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "lightleoopara@gmail.com",
+        "subject": "={{ $json.output.Subject }}",
+        "emailType": "text",
+        "message": "={{ $json.output.email }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1088,
+        -64
+      ],
+      "id": "dc5bbba4-c711-43af-afee-726aadc472e0",
+      "name": "Send a message",
+      "webhookId": "6dafb05a-cd19-4b4d-9d4d-cbc9984e6e76",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EglMyY518snvT557",
+          "name": "Light opara"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\"Subject\":\"\",\n\"email\":\"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1104,
+        80
+      ],
+      "id": "c914cdc4-83b5-4d26-842e-6f085de20876",
+      "name": "Structured Output Parser",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "sendTo": "lightleoopara@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "approvalOptions": {
+          "values": {}
+        },
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "resumeAmount": 45,
+              "resumeUnit": "minutes"
+            }
+          },
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailHitlTool",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        208
+      ],
+      "id": "9cc99d86-f371-4e37-97b9-26d485bd20d9",
+      "name": "Gmail",
+      "webhookId": "f1fd013b-625c-4d11-bb58-91967467240b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EglMyY518snvT557",
+          "name": "Light opara"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "lightleoopara@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false,
+          "replyToSenderOnly": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        688,
+        416
+      ],
+      "id": "8ac6115d-f3ac-4bfd-9b12-d3b26f65cbfa",
+      "name": "Send a message in Gmail",
+      "webhookId": "f252a98e-2b11-444a-941c-924538ec7110",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EglMyY518snvT557",
+          "name": "Light opara"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1834e66e-d051-4a12-86ff-b6d6f2e1ab06",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        []
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "Gmail",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "ba600948-037a-4eee-96df-64ec47043cf4",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-08-22T16:15:54.203Z",
+      "createdAt": "2026-08-22T16:15:54.203Z",
+      "role": "workflow:owner",
+      "workflowId": "Q3mgpPFWkx1UvDq8",
+      "projectId": "nD91cjugsWezUVZZ"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [],
+  "error": "The resource you are requesting could not be found"
+}

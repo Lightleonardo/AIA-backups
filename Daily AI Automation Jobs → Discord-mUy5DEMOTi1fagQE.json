@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-22T15:26:44.047Z",
+  "updatedAt": "2026-08-24T16:53:12.089Z",
   "createdAt": "2026-08-21T18:07:13.916Z",
   "id": "mUy5DEMOTi1fagQE",
   "name": "Daily AI Automation Jobs → Discord",
@@ -117,7 +117,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        368,
+        448,
         112
       ],
       "id": "7edc7c98-4fcb-4ae7-a9c9-583c8cf1064d",
@@ -272,7 +272,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "cb7f911c-9030-4734-bc65-46b43fd3240a",
+  "versionId": "ff633ceb-0813-45c7-86db-9816e596da8c",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
@@ -285,6 +285,5 @@
     }
   ],
   "activeVersion": null,
-  "tags": [],
-  "error": "The resource you are requesting could not be found"
+  "tags": []
 }

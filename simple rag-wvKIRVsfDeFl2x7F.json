@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-11T22:10:35.899Z",
+  "updatedAt": "2026-08-24T16:54:11.712Z",
   "createdAt": "2026-05-25T19:52:15.969Z",
   "id": "wvKIRVsfDeFl2x7F",
   "name": "simple rag",
@@ -65,7 +65,13 @@
         96
       ],
       "id": "2c9d1b4b-63b0-43ac-b20d-13d6736b62f6",
-      "name": "Pinecone Vector Store"
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "ZQPva8ucHWLzzogW",
+          "name": "Light opara"
+        }
+      }
     },
     {
       "parameters": {
@@ -386,7 +392,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "d7028ad4-5068-4ff5-a056-fb4e1cc09d3f",
+  "versionId": "e29bc00f-ae31-4b97-86b1-a074be1f6cef",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
